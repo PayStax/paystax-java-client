@@ -2,6 +2,7 @@ package com.paystax.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -25,6 +26,7 @@ public class PayStaxCard implements Serializable {
 	protected UUID id;
 	protected UUID customerId;
 	protected int priority;
+	protected CardType cardType;
 	protected String accountNumber;
 	protected String maskedAccountNumber;
 	protected String expirationDate;
@@ -50,70 +52,91 @@ public class PayStaxCard implements Serializable {
 		return id;
 	}
 
-	public void setId(UUID id) {
+	public PayStaxCard setId(UUID id) {
 		this.id = id;
+		return this;
 	}
 
 	public UUID getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(UUID customerId) {
+	public PayStaxCard setCustomerId(UUID customerId) {
 		this.customerId = customerId;
+		return this;
 	}
 
 	public int getPriority() {
 		return priority;
 	}
 
-	public void setPriority(int priority) {
+	public PayStaxCard setPriority(int priority) {
 		this.priority = priority;
+		return this;
+	}
+
+	public CardType getCardType() {
+		return cardType;
+	}
+
+	public PayStaxCard setCardType(CardType cardType) {
+		this.cardType = cardType;
+		return this;
 	}
 
 	public String getAccountNumber() {
 		return accountNumber;
 	}
 
-	public void setAccountNumber(String accountNumber) {
+	public PayStaxCard setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
+		return this;
 	}
 
+	@JsonIgnore
 	public String getMaskedAccountNumber() {
 		return maskedAccountNumber;
 	}
 
-	public void setMaskedAccountNumber(String maskedAccountNumber) {
+	@JsonProperty
+	public PayStaxCard setMaskedAccountNumber(String maskedAccountNumber) {
 		this.maskedAccountNumber = maskedAccountNumber;
+		return this;
 	}
 
 	public String getExpirationDate() {
 		return expirationDate;
 	}
 
-	public void setExpirationDate(String expirationDate) {
+	public PayStaxCard setExpirationDate(String expirationDate) {
 		this.expirationDate = expirationDate;
+		return this;
 	}
 
 	public String getCardholderName() {
 		return cardholderName;
 	}
 
-	public void setCardholderName(String cardholderName) {
+	public PayStaxCard setCardholderName(String cardholderName) {
 		this.cardholderName = cardholderName;
+		return this;
 	}
 
 	public PayStaxAddress getAddress() {
 		return address;
 	}
 
-	public void setAddress(PayStaxAddress address) {
+	public PayStaxCard setAddress(PayStaxAddress address) {
 		this.address = address;
+		return this;
 	}
 
+	@JsonIgnore
 	public Map<String, String> getLinks() {
 		return links;
 	}
 
+	@JsonProperty
 	public void setLinks(Map<String, String> links) {
 		this.links = links;
 	}

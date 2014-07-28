@@ -2,6 +2,7 @@ package com.paystax.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -79,10 +80,12 @@ public class PayStaxUser implements Serializable, LinkedResource {
 		return this;
 	}
 
+	@JsonProperty
 	public String getPassword() {
 		return password;
 	}
 
+	@JsonIgnore
 	public PayStaxUser setPassword(String password) {
 		this.password = password;
 		return this;
@@ -115,10 +118,12 @@ public class PayStaxUser implements Serializable, LinkedResource {
 		return this;
 	}
 
+	@JsonIgnore
 	public Map<String, String> getLinks() {
 		return links;
 	}
 
+	@JsonProperty
 	public void setLinks(Map<String, String> links) {
 		this.links = links;
 	}

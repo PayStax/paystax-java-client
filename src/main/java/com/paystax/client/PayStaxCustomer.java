@@ -2,6 +2,7 @@ package com.paystax.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -108,10 +109,12 @@ public class PayStaxCustomer implements Serializable {
 		return this;
 	}
 
+	@JsonIgnore
 	public Map<String, String> getLinks() {
 		return links;
 	}
 
+	@JsonProperty
 	public void setLinks(Map<String, String> links) {
 		this.links = links;
 	}

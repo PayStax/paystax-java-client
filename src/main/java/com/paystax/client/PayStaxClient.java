@@ -121,7 +121,7 @@ public class PayStaxClient implements Serializable, LinkedResource {
 		return search(new PayStaxCustomerSearch());
 	}
 
-	public PayStaxCard newCard(UUID customerId) {
+	public PayStaxCard newCard() {
 		init();
 		return new PayStaxCard(this);
 	}

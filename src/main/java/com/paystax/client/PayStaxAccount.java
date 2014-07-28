@@ -2,8 +2,11 @@ package com.paystax.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -12,7 +15,7 @@ import java.util.UUID;
  * @author Erik R. Jensen
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PayStaxAccount implements Serializable {
+public class PayStaxAccount implements LinkedResource, Serializable {
 
 	private static final long serialVersionUID = 5889487704196401219L;
 
@@ -21,6 +24,7 @@ public class PayStaxAccount implements Serializable {
 	protected UUID id;
 	protected String site;
 	protected String companyName;
+	protected Map<String, String> links = new HashMap<String, String>();
 
 	public PayStaxAccount() {}
 
@@ -61,6 +65,16 @@ public class PayStaxAccount implements Serializable {
 	public PayStaxAccount setCompanyName(String companyName) {
 		this.companyName = companyName;
 		return this;
+	}
+
+	@JsonIgnore
+	public Map<String, String> getLinks() {
+		return links;
+	}
+
+	@JsonProperty
+	public void setLinks(Map<String, String> links) {
+		this.links = links;
 	}
 
 	@Override

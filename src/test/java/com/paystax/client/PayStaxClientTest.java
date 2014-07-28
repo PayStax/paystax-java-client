@@ -31,6 +31,7 @@ public class PayStaxClientTest {
 				.setFirstName("Unit")
 				.setLastName("Test")
 				.save();
+		assertNotNull(user1.getId());
 
 		PayStaxUser user2 = client.newUser()
 				.setUsername("unittest2")
@@ -39,6 +40,7 @@ public class PayStaxClientTest {
 				.setFirstName("Unit")
 				.setLastName("Test")
 				.save();
+		assertNotNull(user2.getId());
 
 
 		PayStaxPage<PayStaxUser> users = client.search(new PayStaxUserSearch()
@@ -65,6 +67,7 @@ public class PayStaxClientTest {
 				.setFullName("Unit Test")
 				.setEmailAddress("unittest1@paystax.com")
 				.save();
+		assertNotNull(customer1.getId());
 
 		PayStaxCustomer customer2 = client.newCustomer()
 				.setIdentifier1("customer2")
@@ -74,6 +77,7 @@ public class PayStaxClientTest {
 				.setFullName("Unit Test")
 				.setEmailAddress("unittest2@paystax.com")
 				.save();
+		assertNotNull(customer2.getId());
 
 		PayStaxPage<PayStaxCustomer> customers = client.search(new PayStaxCustomerSearch()
 				.setSize(1)
@@ -92,6 +96,42 @@ public class PayStaxClientTest {
 		assertThat(customers.getContent().get(0).getIdentifier1(), equalTo("customer1"));
 		assertThat(users.getPage().getCount(), equalTo(2L));
 		assertThat(users.getPage().getNumber(), equalTo(0));
+
+		PayStaxCard card1 = client.newCard()
+				.setCardType(CardType.VISA)
+				.setAccountNumber("4111111111111111")
+				.setCardholderName("John Doe")
+				.setCustomerId(customer1.getId())
+				.setExpirationDate("01/2020")
+				.setPriority(1)
+				.setAddress(new PayStaxAddress()
+						.setAddressLine1("123 Test St")
+						.setAddressLine2("Suite 101")
+						.setCity("Pleasant Grove")
+						.setState("UT")
+						.setPostalCode("84062")
+						.setCountry("USA"))
+				.save();
+		assertNotNull(card1.getId());
+		assertThat(card1.getMaskedAccountNumber(), equalTo("************1111"));
+
+		PayStaxCard card2 = client.newCard()
+				.setCardType(CardType.MASTERCARD)
+				.setAccountNumber("5555555555554444")
+				.setCardholderName("John Doe")
+				.setCustomerId(customer1.getId())
+				.setExpirationDate("01/2013")
+				.setPriority(2)
+				.setAddress(new PayStaxAddress()
+						.setAddressLine1("123 Test St")
+						.setAddressLine2("Suite 101")
+						.setCity("Pleasant Grove")
+						.setState("UT")
+						.setPostalCode("84062")
+						.setCountry("USA"))
+				.save();
+		assertNotNull(card2.getId());
+		assertThat(card2.getMaskedAccountNumber(), equalTo("************4444"));
 
 	}
 
