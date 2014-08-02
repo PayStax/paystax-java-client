@@ -133,6 +133,28 @@ public class PayStaxClientTest {
 		assertNotNull(card2.getId());
 		assertThat(card2.getMaskedAccountNumber(), equalTo("************4444"));
 
+		PayStaxCard card = client.getCard(customer1.getId(), card1.getId());
+		assertThat(card, equalTo(card1));
+
+		PayStaxPage<PayStaxCard> cards = client.search(new PayStaxCardSearch()
+				.setSize(1)
+				.addSort(new PayStaxSortBy("expirationDate", PayStaxSortDirection.DESC)));
+
+		assertThat(cards.getPage().getNumber(), equalTo(0));
+		assertThat(cards.getPage().getPages(), equalTo(2));
+		assertThat(cards.getPage().getCount(), equalTo(2L));
+		assertThat(cards.getContent().get(0), equalTo(card1));
+
+		cards = cards.next();
+
+		assertThat(cards.getPage().getNumber(), equalTo(1));
+		assertThat(cards.getPage().getPages(), equalTo(2));
+		assertThat(cards.getPage().getCount(), equalTo(2L));
+		assertThat(cards.getContent().get(0), equalTo(card2));
+
+		cards = cards.prev();
+		assertThat(cards.getContent().get(0), equalTo(card1));
+
 	}
 
 }

@@ -141,6 +141,21 @@ public class PayStaxCustomer implements Serializable {
 		client.getHttpClient().delete(links.get("self"));
 	}
 
+	@SuppressWarnings("unchecked")
+	public PayStaxPage<PayStaxCard> search(PayStaxCardSearch search) throws IOException {
+		search.setCustomerId(getId());
+		PayStaxPage<PayStaxCard> cards = client.getHttpClient().get(
+				new LinkBuilder(links.get("cards")).addQueryParameters(search).toString(),
+				PayStaxPage.class, PayStaxCard.class);
+		cards.setClient(client);
+		cards.setClazz(PayStaxCard.class);
+		return cards;
+	}
+
+	public PayStaxPage<PayStaxCard> cards() throws IOException {
+		return search(new PayStaxCardSearch());
+	}
+
 	@Override
 	public String toString() {
 		return "PayStaxCustomer{" +
@@ -152,5 +167,22 @@ public class PayStaxCustomer implements Serializable {
 				", fullName='" + fullName + '\'' +
 				", emailAddress='" + emailAddress + '\'' +
 				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		PayStaxCustomer that = (PayStaxCustomer) o;
+		return id.equals(that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 }

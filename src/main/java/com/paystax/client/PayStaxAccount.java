@@ -85,4 +85,21 @@ public class PayStaxAccount implements LinkedResource, Serializable {
 				", companyName='" + companyName + '\'' +
 				'}';
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		PayStaxAccount that = (PayStaxAccount) o;
+		return id.equals(that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
 }

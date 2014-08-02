@@ -61,4 +61,5 @@ public abstract class PayStaxSearch<T> implements Serializable {
 		this.sort.addAll(Arrays.asList(sort));
 		return (T)this;
 	}
+
 }
