@@ -15,6 +15,8 @@
  */
 package com.paystax.client;
 
+import com.paystax.client.exception.PayStaxForbiddenException;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
@@ -78,18 +80,24 @@ public class PayStaxClient implements Serializable, LinkedResource {
 		return httpClient.get(links.get("account"), new PayStaxAccount(this));
 	}
 
+	/**
+	 * This method will issue a reset to PayStax which will delete all data except for the account itself and
+	 * the authenticated user which issues the reset call. This feature is disabled in the PayStax production
+	 * environment, but is enabled in the test environment to help facilitate integration testing.
+	 *
+	 * @throws IOException if an error occurs
+	 */
+	public void reset() throws IOException {
+		init();
+		if (!links.containsKey("reset")) {
+			throw new PayStaxForbiddenException();
+		}
+		httpClient.execute(links.get("reset"));
+	}
+
 	public PayStaxUser newUser() {
 		init();
 		return new PayStaxUser(this);
-	}
-
-	public PayStaxUser getUser(UUID userId) throws IOException {
-		init();
-		PayStaxUser user = httpClient.get(
-				new LinkBuilder(links.get("user")).expand(userId).toString(),
-				PayStaxUser.class);
-		user.setClient(this);
-		return user;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -107,18 +115,18 @@ public class PayStaxClient implements Serializable, LinkedResource {
 		return search(new PayStaxUserSearch());
 	}
 
+	public PayStaxUser getUser(UUID userId) throws IOException {
+		init();
+		PayStaxUser user = httpClient.get(
+				new LinkBuilder(links.get("user")).expand(userId).toString(),
+				PayStaxUser.class);
+		user.setClient(this);
+		return user;
+	}
+
 	public PayStaxCustomer newCustomer() {
 		init();
 		return new PayStaxCustomer(this);
-	}
-
-	public PayStaxCustomer getCustomer(UUID customerId) throws IOException {
-		init();
-		PayStaxCustomer customer = httpClient.get(
-				new LinkBuilder(links.get("customer")).expand(customerId).toString(),
-				PayStaxCustomer.class);
-		customer.setClient(this);
-		return customer;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -136,18 +144,18 @@ public class PayStaxClient implements Serializable, LinkedResource {
 		return search(new PayStaxCustomerSearch());
 	}
 
+	public PayStaxCustomer getCustomer(UUID customerId) throws IOException {
+		init();
+		PayStaxCustomer customer = httpClient.get(
+				new LinkBuilder(links.get("customer")).expand(customerId).toString(),
+				PayStaxCustomer.class);
+		customer.setClient(this);
+		return customer;
+	}
+
 	public PayStaxCard newCard() {
 		init();
 		return new PayStaxCard(this);
-	}
-
-	public PayStaxCard getCard(UUID customerId, UUID cardId) throws IOException {
-		init();
-		PayStaxCard card = httpClient.get(
-				new LinkBuilder(links.get("card")).expand(customerId, cardId).toString(),
-				PayStaxCard.class);
-		card.setClient(this);
-		return card;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -163,6 +171,15 @@ public class PayStaxClient implements Serializable, LinkedResource {
 
 	public PayStaxPage<PayStaxCard> cards() throws IOException {
 		return search(new PayStaxCardSearch());
+	}
+
+	public PayStaxCard getCard(UUID customerId, UUID cardId) throws IOException {
+		init();
+		PayStaxCard card = httpClient.get(
+				new LinkBuilder(links.get("card")).expand(customerId, cardId).toString(),
+				PayStaxCard.class);
+		card.setClient(this);
+		return card;
 	}
 
 	@Override

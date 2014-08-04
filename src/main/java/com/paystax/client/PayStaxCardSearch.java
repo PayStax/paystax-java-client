@@ -25,73 +25,80 @@ public class PayStaxCardSearch extends PayStaxSearch<PayStaxCardSearch> {
 
 	private static final long serialVersionUID = 6866724642159771144L;
 
-	UUID customerId;
+	private UUID customerId;
 
-	String accountNumber;
+	private String accountNumber;
 
-	String lastFourDigits;
+	private String lastFourDigits;
 
-	CardType cardType;
+	private CardType cardType;
 
-	Date expirationDateBefore;
+	private Date expirationDateBefore;
 
-	Date expirationDateAfter;
+	private Date expirationDateAfter;
 
-	Boolean expired;
+	private Boolean expired;
 
 	public UUID getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(UUID customerId) {
+	public PayStaxCardSearch setCustomerId(UUID customerId) {
 		this.customerId = customerId;
+		return this;
 	}
 
 	public String getAccountNumber() {
 		return accountNumber;
 	}
 
-	public void setAccountNumber(String accountNumber) {
+	public PayStaxCardSearch setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
+		return this;
 	}
 
 	public String getLastFourDigits() {
 		return lastFourDigits;
 	}
 
-	public void setLastFourDigits(String lastFourDigits) {
+	public PayStaxCardSearch setLastFourDigits(String lastFourDigits) {
 		this.lastFourDigits = lastFourDigits;
+		return this;
 	}
 
 	public CardType getCardType() {
 		return cardType;
 	}
 
-	public void setCardType(CardType cardType) {
+	public PayStaxCardSearch setCardType(CardType cardType) {
 		this.cardType = cardType;
+		return this;
 	}
 
 	public Date getExpirationDateBefore() {
 		return expirationDateBefore;
 	}
 
-	public void setExpirationDateBefore(Date expirationDateBefore) {
+	public PayStaxCardSearch setExpirationDateBefore(Date expirationDateBefore) {
 		this.expirationDateBefore = expirationDateBefore;
+		return this;
 	}
 
 	public Date getExpirationDateAfter() {
 		return expirationDateAfter;
 	}
 
-	public void setExpirationDateAfter(Date expirationDateAfter) {
+	public PayStaxCardSearch setExpirationDateAfter(Date expirationDateAfter) {
 		this.expirationDateAfter = expirationDateAfter;
+		return this;
 	}
 
 	public Boolean getExpired() {
 		return expired;
 	}
 
-	public void setExpired(Boolean expired) {
+	public PayStaxCardSearch setExpired(Boolean expired) {
 		this.expired = expired;
+		return this;
 	}
 }

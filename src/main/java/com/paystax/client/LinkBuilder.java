@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Helper class to build links from templates.
+ *
  * @author Erik R. Jensen
  */
 public class LinkBuilder {
@@ -39,7 +41,7 @@ public class LinkBuilder {
 	public LinkBuilder(String url) {
 		int idx = url.indexOf("{?");
 		if (idx != -1) {
-			String query = url.substring(idx, url.length());
+			String query = url.substring(idx + 2, url.length() - 1);
 			queryParameters.addAll(Arrays.asList(query.split(",")));
 			this.url = url.substring(0, idx);
 		} else {
@@ -48,7 +50,16 @@ public class LinkBuilder {
 		idx = url.indexOf("{");
 		while (idx != -1) {
 			int end = url.indexOf("}", idx);
-			pathVariables.add(url.substring(idx + 1, end));
+			if (end == -1) {
+				throw new IllegalStateException(
+						"Failed to parse URL template. Missing closing } near character " + idx);
+			}
+			String pathVariable = url.substring(idx + 1, end);
+			if (pathVariable.isEmpty()) {
+				throw new IllegalStateException(
+						"Failed to parse URL template. Path variable is empty near character " + idx);
+			}
+			pathVariables.add(pathVariable);
 			idx = url.indexOf("{", end);
 		}
 	}

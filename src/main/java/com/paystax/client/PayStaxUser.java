@@ -35,7 +35,7 @@ public class PayStaxUser implements Serializable, LinkedResource {
 
 	@JsonIgnore
 	protected PayStaxClient client;
-	protected String id;
+	protected UUID id;
 	protected String firstName;
 	protected String lastName;
 	protected String username;
@@ -43,6 +43,8 @@ public class PayStaxUser implements Serializable, LinkedResource {
 	protected String emailAddress;
 	protected List<String> roles = new ArrayList<String>();
 	protected List<String> permissions = new ArrayList<String>();
+	protected Date createdDate;
+	protected Date lastModifiedDate;
 	protected Map<String, String> links = new HashMap<String, String>();
 
 	public PayStaxUser() {}
@@ -59,11 +61,11 @@ public class PayStaxUser implements Serializable, LinkedResource {
 		this.client = client;
 	}
 
-	public String getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public PayStaxUser setId(String id) {
+	public PayStaxUser setId(UUID id) {
 		this.id = id;
 		return this;
 	}
@@ -124,6 +126,11 @@ public class PayStaxUser implements Serializable, LinkedResource {
 		return this;
 	}
 
+	public PayStaxUser addRole(String role) {
+		roles.add(role);
+		return this;
+	}
+
 	public List<String> getPermissions() {
 		return permissions;
 	}
@@ -131,6 +138,31 @@ public class PayStaxUser implements Serializable, LinkedResource {
 	public PayStaxUser setPermissions(List<String> permissions) {
 		this.permissions = permissions;
 		return this;
+	}
+
+	public PayStaxUser addPermission(String permission) {
+		permissions.add(permission);
+		return this;
+	}
+
+	@JsonIgnore
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	@JsonProperty
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	@JsonIgnore
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	@JsonProperty
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
 	}
 
 	@JsonIgnore
@@ -150,15 +182,14 @@ public class PayStaxUser implements Serializable, LinkedResource {
 
 	public PayStaxUser save() throws IOException {
 		if (id == null) { // create
-			client.getHttpClient().create(
+			return client.getHttpClient().create(
 					new LinkBuilder(client.getLinks().get("users")).toString(),
 					this);
 		} else { // update
-			client.getHttpClient().update(
+			return client.getHttpClient().update(
 					new LinkBuilder(links.get("self")).toString(),
 					this);
 		}
-		return this;
 	}
 
 	public void delete() throws IOException {

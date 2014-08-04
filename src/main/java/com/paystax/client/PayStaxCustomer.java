@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -45,6 +46,8 @@ public class PayStaxCustomer implements Serializable {
 	protected String lastName;
 	protected String fullName;
 	protected String emailAddress;
+	protected Date createdDate;
+	protected Date lastModifiedDate;
 	protected Map<String, String> links = new HashMap<String, String>();
 
 	public PayStaxCustomer() {}
@@ -125,6 +128,26 @@ public class PayStaxCustomer implements Serializable {
 	}
 
 	@JsonIgnore
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	@JsonProperty
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	@JsonIgnore
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	@JsonProperty
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	@JsonIgnore
 	public Map<String, String> getLinks() {
 		return links;
 	}
@@ -141,15 +164,14 @@ public class PayStaxCustomer implements Serializable {
 
 	public PayStaxCustomer save() throws IOException {
 		if (id == null) { // create
-			client.getHttpClient().create(
+			return client.getHttpClient().create(
 					new LinkBuilder(client.getLinks().get("customers")).toString(),
 					this);
 		} else { // update
-			client.getHttpClient().update(
+			return client.getHttpClient().update(
 					new LinkBuilder(links.get("self")).toString(),
 					this);
 		}
-		return this;
 	}
 
 	public void delete() throws IOException {

@@ -18,8 +18,11 @@ package com.paystax.client;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.paystax.client.exception.PayStaxForbiddenException;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,6 +42,8 @@ public class PayStaxAccount implements LinkedResource, Serializable {
 	protected UUID id;
 	protected String site;
 	protected String companyName;
+	protected Date createdDate;
+	protected Date lastModifiedDate;
 	protected Map<String, String> links = new HashMap<String, String>();
 
 	public PayStaxAccount() {}
@@ -83,6 +88,26 @@ public class PayStaxAccount implements LinkedResource, Serializable {
 	}
 
 	@JsonIgnore
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	@JsonProperty
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	@JsonIgnore
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	@JsonProperty
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	@JsonIgnore
 	public Map<String, String> getLinks() {
 		return links;
 	}
@@ -90,6 +115,21 @@ public class PayStaxAccount implements LinkedResource, Serializable {
 	@JsonProperty
 	public void setLinks(Map<String, String> links) {
 		this.links = links;
+	}
+
+	public PayStaxAccount save() throws IOException {
+		if (id == null) { // create
+			if (!client.getLinks().containsKey("accounts")) {
+				throw new PayStaxForbiddenException("You do not have permission to create new accounts");
+			}
+			return client.getHttpClient().create(
+					new LinkBuilder(client.getLinks().get("accounts")).toString(),
+					this);
+		} else {
+			return client.getHttpClient().update(
+					new LinkBuilder(links.get("self")).toString(),
+					this);
+		}
 	}
 
 	@Override

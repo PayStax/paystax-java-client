@@ -15,161 +15,220 @@
  */
 package com.paystax.client;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static com.paystax.client.TestUtil.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 /**
+ * Functional tests for PayStaxClient.
+ *
  * @author Erik R. Jensen
  */
 public class PayStaxClientTest {
 
+	private static Logger log = LoggerFactory.getLogger(PayStaxClientTest.class);
+	private PayStaxClient client;
+
+	@Before
+	public void before() throws IOException {
+		log.debug("Initializing before executing test");
+		client = new PayStaxClient(URL, USERNAME, PASSWORD);
+		client.reset();
+	}
+
 	@Test
-	public void test() throws IOException {
-		PayStaxClient client = new PayStaxClient("http://test.paystax.cc:8080", "test", "Password1!");
+	public void testPayStaxClientConstructor1() {
+		client = new PayStaxClient(URL, USERNAME, PASSWORD);
+		assertNotNull(client.getHttpClient());
+	}
+
+	@Test
+	public void testPayStaxClientConstructor2() {
+		HttpClient httpClient = new HttpURLConnectionClient(USERNAME, PASSWORD);
+		client = new PayStaxClient(URL, httpClient);
+		assertEquals(httpClient, client.getHttpClient());
+	}
+
+	@Test
+	public void getAccountId() {
 		assertNotNull(client.getAccountId());
-		assertThat(client.getCompanyName(), equalTo("Test, LLC"));
+	}
 
+	@Test
+	public void testGetCompanyName() {
+		assertNotNull(client.getCompanyName());
+	}
+
+	@Test
+	public void testGetLinks() {
+		Map<String, String> links = client.getLinks();
+		assertTrue(links.containsKey("account"));
+	}
+
+	@Test
+	public void testGetAccount() throws IOException {
 		PayStaxAccount account = client.getAccount();
-		assertNotNull(account.getId());
-		assertThat(account.getSite(), equalTo("test"));
-		assertThat(account.getCompanyName(), equalTo("Test, LLC"));
+		assertEquals(client.getAccountId(), account.getId());
+	}
 
-		PayStaxUser user1 = client.newUser()
-				.setUsername("unittest1")
+	@Test
+	public void testNewUser() throws IOException {
+		PayStaxUser user = client.newUser();
+		assertEquals(client, user.getClient());
+		assertTrue(user.getLinks().isEmpty());
+	}
+
+	@Test
+	public void testSearchUser() throws IOException {
+		PayStaxUserSearch search = new PayStaxUserSearch()
+				.setUsername(USERNAME);
+		PayStaxPage<PayStaxUser> users = client.search(search);
+		assertEquals(1L, users.getPage().getCount());
+		assertEquals(0, users.getPage().getNumber());
+		assertEquals(USERNAME, users.getContent().get(0).getUsername());
+	}
+
+	@Test
+	public void testSearchUserPaging() throws IOException {
+		PayStaxUser user = client.newUser()
+				.setUsername("zztest")
 				.setPassword("Password1!")
-				.setEmailAddress("unittest1@paystax.com")
 				.setFirstName("Unit")
 				.setLastName("Test")
+				.setEmailAddress("test@example.com")
 				.save();
-		assertNotNull(user1.getId());
 
-		PayStaxUser user2 = client.newUser()
-				.setUsername("unittest2")
-				.setPassword("Password1!")
-				.setEmailAddress("unittest2@paystax.com")
-				.setFirstName("Unit")
-				.setLastName("Test")
-				.save();
-		assertNotNull(user2.getId());
-
-
-		PayStaxPage<PayStaxUser> users = client.search(new PayStaxUserSearch()
+		PayStaxUserSearch search = new PayStaxUserSearch()
 				.setSize(1)
-				.setUsernameStartsWith("unittest")
-				.addSort(new PayStaxSortBy("username", PayStaxSortDirection.ASC)));
+				.addSort(new PayStaxSortBy("username", PayStaxSortDirection.DESC));
 
-		assertThat(users.getContent().get(0).getUsername(), equalTo("unittest1"));
-		assertThat(users.getPage().getNumber(), equalTo(0));
+		PayStaxPage<PayStaxUser> users = client.search(search);
+		assertEquals(2L, users.getPage().getCount());
+		assertEquals(2, users.getPage().getPages());
+		assertEquals(0, users.getPage().getNumber());
+		assertEquals("zztest", users.getContent().get(0).getUsername());
 
 		users = users.next();
-		assertThat(users.getContent().get(0).getUsername(), equalTo("unittest2"));
-		assertThat(users.getPage().getNumber(), equalTo(1));
+		assertEquals(2L, users.getPage().getCount());
+		assertEquals(2, users.getPage().getPages());
+		assertEquals(1, users.getPage().getNumber());
+		assertEquals(USERNAME, users.getContent().get(0).getUsername());
 
 		users = users.prev();
-		assertThat(users.getContent().get(0).getUsername(), equalTo("unittest1"));
-		assertThat(users.getPage().getNumber(), equalTo(0));
+		assertEquals("zztest", users.getContent().get(0).getUsername());
+	}
 
-		PayStaxCustomer customer1 = client.newCustomer()
-				.setIdentifier1("customer1")
-				.setIdentifier2("customer1")
-				.setFirstName("Unit")
-				.setLastName("Test")
-				.setFullName("Unit Test")
-				.setEmailAddress("unittest1@paystax.com")
-				.save();
-		assertNotNull(customer1.getId());
+	@Test
+	public void testUsers() throws IOException {
+		PayStaxPage<PayStaxUser> users = client.users();
+		assertEquals(1L, users.getPage().getCount());
+		assertEquals(0, users.getPage().getNumber());
+		assertEquals(USERNAME, users.getContent().get(0).getUsername());
+	}
 
-		PayStaxCustomer customer2 = client.newCustomer()
-				.setIdentifier1("customer2")
-				.setIdentifier2("customer2")
-				.setFirstName("Unit")
-				.setLastName("Test")
-				.setFullName("Unit Test")
-				.setEmailAddress("unittest2@paystax.com")
-				.save();
-		assertNotNull(customer2.getId());
+	@Test
+	public void testGetUser() throws IOException {
+		PayStaxUser user = newUser(client);
+		PayStaxUser found = client.getUser(user.getId());
+		assertThat(found, equalTo(user));
+	}
 
-		PayStaxPage<PayStaxCustomer> customers = client.search(new PayStaxCustomerSearch()
-				.setSize(1)
-				.setFirstNameStartsWith("Unit")
-				.addSort(new PayStaxSortBy("identifier1", PayStaxSortDirection.ASC)));
+	@Test
+	public void testNewCustomer() throws IOException {
+		PayStaxCustomer customer = client.newCustomer();
+		assertEquals(client, customer.getClient());
+		assertTrue(customer.getLinks().isEmpty());
+	}
 
-		assertThat(customers.getContent().get(0).getIdentifier1(), equalTo("customer1"));
-		assertThat(users.getPage().getCount(), equalTo(2L));
-		assertThat(users.getPage().getNumber(), equalTo(0));
+	@Test
+	public void testSearchCustomers() throws IOException {
+		PayStaxCustomer customer = newCustomer(client);
+		PayStaxCustomerSearch search = new PayStaxCustomerSearch()
+				.setIdentifier1("unittestid1");
+		PayStaxPage<PayStaxCustomer> customers = client.search(search);
+		assertEquals(1L, customers.getPage().getCount());
+		assertEquals(0, customers.getPage().getNumber());
+		assertEquals(customer, customers.getContent().get(0));
+	}
 
-		customers = customers.next();
-		assertThat(customers.getContent().get(0).getIdentifier1(), equalTo("customer2"));
-		assertThat(users.getPage().getNumber(), equalTo(0));
+	@Test
+	public void testCustomers() throws IOException {
+		PayStaxCustomer customer = newCustomer(client);
+		PayStaxPage<PayStaxCustomer> customers = client.customers();
+		assertEquals(1L, customers.getPage().getCount());
+		assertEquals(0, customers.getPage().getNumber());
+		assertEquals(customer, customers.getContent().get(0));
+	}
 
-		customers = customers.prev();
-		assertThat(customers.getContent().get(0).getIdentifier1(), equalTo("customer1"));
-		assertThat(users.getPage().getCount(), equalTo(2L));
-		assertThat(users.getPage().getNumber(), equalTo(0));
+	@Test
+	public void testGetCustomer() throws IOException {
+		PayStaxCustomer customer = newCustomer(client);
+		PayStaxCustomer found = client.getCustomer(customer.getId());
+		assertEquals(customer, found);
+	}
 
-		PayStaxCard card1 = client.newCard()
-				.setCardType(CardType.VISA)
-				.setAccountNumber("4111111111111111")
-				.setCardholderName("John Doe")
-				.setCustomerId(customer1.getId())
-				.setExpirationDate("01/2020")
-				.setPriority(1)
-				.setAddress(new PayStaxAddress()
-						.setAddressLine1("123 Test St")
-						.setAddressLine2("Suite 101")
-						.setCity("Pleasant Grove")
-						.setState("UT")
-						.setPostalCode("84062")
-						.setCountry("USA"))
-				.save();
-		assertNotNull(card1.getId());
-		assertThat(card1.getMaskedAccountNumber(), equalTo("************1111"));
+	@Test
+	public void testNewCard() throws IOException {
+		PayStaxCard card = client.newCard();
+		assertEquals(client, card.getClient());
+		assertTrue(card.getLinks().isEmpty());
+	}
 
-		PayStaxCard card2 = client.newCard()
-				.setCardType(CardType.MASTERCARD)
-				.setAccountNumber("5555555555554444")
-				.setCardholderName("John Doe")
-				.setCustomerId(customer1.getId())
-				.setExpirationDate("01/2013")
-				.setPriority(2)
-				.setAddress(new PayStaxAddress()
-						.setAddressLine1("123 Test St")
-						.setAddressLine2("Suite 101")
-						.setCity("Pleasant Grove")
-						.setState("UT")
-						.setPostalCode("84062")
-						.setCountry("USA"))
-				.save();
-		assertNotNull(card2.getId());
-		assertThat(card2.getMaskedAccountNumber(), equalTo("************4444"));
+	@Test
+	public void testSearchCards() throws IOException {
+		PayStaxCustomer customer = newCustomer(client);
+		PayStaxCard card1 = newVisaCard(client, customer.getId());
+		PayStaxCard card2 = newMasterCard(client, customer.getId());
+		PayStaxCardSearch search = new PayStaxCardSearch()
+				.setCustomerId(customer.getId());
+		PayStaxPage<PayStaxCard> cards = client.search(search);
+		assertEquals(2L, cards.getPage().getCount());
+		assertEquals(card1, cards.getContent().get(0));
+		assertEquals(card2, cards.getContent().get(1));
+	}
 
-		PayStaxCard card = client.getCard(customer1.getId(), card1.getId());
-		assertThat(card, equalTo(card1));
-
-		PayStaxPage<PayStaxCard> cards = client.search(new PayStaxCardSearch()
-				.setSize(1)
-				.addSort(new PayStaxSortBy("expirationDate", PayStaxSortDirection.DESC)));
-
-		assertThat(cards.getPage().getNumber(), equalTo(0));
-		assertThat(cards.getPage().getPages(), equalTo(2));
-		assertThat(cards.getPage().getCount(), equalTo(2L));
-		assertThat(cards.getContent().get(0), equalTo(card1));
-
+	@Test
+	public void testSearchCardsPaging() throws IOException {
+		PayStaxCustomer customer = newCustomer(client);
+		PayStaxCard card1 = newVisaCard(client, customer.getId());
+		PayStaxCard card2 = newMasterCard(client, customer.getId());
+		PayStaxCardSearch search = new PayStaxCardSearch()
+				.setCustomerId(customer.getId())
+				.setSize(1);
+		PayStaxPage<PayStaxCard> cards = client.search(search);
+		assertEquals(2L, cards.getPage().getCount());
+		assertEquals(card1, cards.getContent().get(0));
 		cards = cards.next();
-
-		assertThat(cards.getPage().getNumber(), equalTo(1));
-		assertThat(cards.getPage().getPages(), equalTo(2));
-		assertThat(cards.getPage().getCount(), equalTo(2L));
-		assertThat(cards.getContent().get(0), equalTo(card2));
-
+		assertEquals(card2, cards.getContent().get(0));
 		cards = cards.prev();
-		assertThat(cards.getContent().get(0), equalTo(card1));
+		assertEquals(card1, cards.getContent().get(0));
+	}
 
+	@Test
+	public void testCards() throws IOException {
+		PayStaxCustomer customer = newCustomer(client);
+		PayStaxCard card1 = newVisaCard(client, customer.getId());
+		PayStaxCard card2 = newMasterCard(client, customer.getId());
+		PayStaxPage<PayStaxCard> cards = client.cards();
+		assertEquals(2L, cards.getPage().getCount());
+		assertEquals(card1, cards.getContent().get(0));
+		assertEquals(card2, cards.getContent().get(1));
+	}
+
+	@Test
+	public void testGetCard() throws IOException {
+		PayStaxCustomer customer = newCustomer(client);
+		PayStaxCard card = newVisaCard(client, customer.getId());
+		PayStaxCard found = client.getCard(customer.getId(), card.getId());
+		assertEquals(card, found);
 	}
 
 }

@@ -313,7 +313,7 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	 * @param <T> the type
 	 * @throws IOException if an I/O error occurs
 	 */
-	public <T> void update(String url, T o) throws IOException {
+	public <T> T update(String url, T o) throws IOException {
 		HttpURLConnection conn = null;
 		InputStream in = null;
 		OutputStream out = null;
@@ -343,6 +343,7 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 			} else {
 				reader.readValue(in);
 			}
+			return o;
 		} catch (IOException x) {
 			throw getError(x, conn);
 		} finally {
@@ -358,7 +359,7 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	 * @param <T> the type
 	 * @throws IOException if an I/O error occurs
 	 */
-	public <T> void create(String url, T o) throws IOException {
+	public <T> T create(String url, T o) throws IOException {
 		HttpURLConnection conn = null;
 		InputStream in = null;
 		OutputStream out = null;
@@ -388,6 +389,7 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 			} else {
 				reader.readValue(in);
 			}
+			return o;
 		} catch (IOException x) {
 			throw getError(x, conn);
 		} finally {
@@ -403,16 +405,41 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	 */
 	public void delete(String url) throws IOException {
 		HttpURLConnection conn = null;
+		InputStream in = null;
 		try {
 			conn = setup(HttpMethod.DELETE, url);
-			conn.setDoInput(false);
 			logRequest(conn, null);
 			conn.connect();
+			in = conn.getInputStream();
+			readString(in); // read the stream to completion
 			logResponse(conn, null);
 		} catch (IOException x) {
 			throw getError(x, conn);
 		} finally {
-			cleanup(conn, null, null);
+			cleanup(conn, in, null);
+		}
+	}
+
+	/**
+	 * Sends an HTTP POST request to execute an action.
+	 *
+	 * @param url the URL to send the POST request to
+	 * @throws IOException if an I/O error occurs
+	 */
+	public void execute(String url) throws IOException {
+		HttpURLConnection conn = null;
+		InputStream in = null;
+		try {
+			conn = setup(HttpMethod.POST, url);
+			logRequest(conn, null);
+			conn.connect();
+			in = conn.getInputStream();
+			readString(in); // read the stream to completion
+			logResponse(conn, null);
+		} catch (IOException x) {
+			throw getError(x, conn);
+		} finally {
+			cleanup(conn, in, null);
 		}
 	}
 
