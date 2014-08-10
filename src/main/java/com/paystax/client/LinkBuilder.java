@@ -15,6 +15,8 @@
  */
 package com.paystax.client;
 
+import com.paystax.client.exception.LinkParseException;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -51,12 +53,12 @@ public class LinkBuilder {
 		while (idx != -1) {
 			int end = url.indexOf("}", idx);
 			if (end == -1) {
-				throw new IllegalStateException(
+				throw new LinkParseException(
 						"Failed to parse URL template. Missing closing } near character " + idx);
 			}
 			String pathVariable = url.substring(idx + 1, end);
 			if (pathVariable.isEmpty()) {
-				throw new IllegalStateException(
+				throw new LinkParseException(
 						"Failed to parse URL template. Path variable is empty near character " + idx);
 			}
 			pathVariables.add(pathVariable);
