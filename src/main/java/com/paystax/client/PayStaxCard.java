@@ -183,15 +183,15 @@ public class PayStaxCard implements Serializable {
 		return client.getHttpClient().get(links.get("self"), this);
 	}
 
-	public PayStaxCard save() throws IOException {
-		if (id == null) { // create
-			return client.getHttpClient().create(
-					new LinkBuilder(client.getLinks().get("cards")).toString(),
-					this);
-		} else { // update
-			return client.getHttpClient().update(links.get("self"), this);
-		}
-	}
+//	public PayStaxCard save() throws IOException {
+//		if (id == null) { // create
+//			return client.getHttpClient().create(
+//					new LinkBuilder(client.getLinks().get("cards")).toString(),
+//					this);
+//		} else { // update
+//			return client.getHttpClient().update(links.get("self"), this);
+//		}
+//	}
 
 	public void delete() throws IOException {
 		client.getHttpClient().delete(links.get("self"));

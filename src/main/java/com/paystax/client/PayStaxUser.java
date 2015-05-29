@@ -180,17 +180,17 @@ public class PayStaxUser implements Serializable, LinkedResource {
 		return this;
 	}
 
-	public PayStaxUser save() throws IOException {
-		if (id == null) { // create
-			return client.getHttpClient().create(
-					new LinkBuilder(client.getLinks().get("users")).toString(),
-					this);
-		} else { // update
-			return client.getHttpClient().update(
-					new LinkBuilder(links.get("self")).toString(),
-					this);
-		}
-	}
+//	public PayStaxUser save() throws IOException {
+//		if (id == null) { // create
+//			return client.getHttpClient().create(
+//					new LinkBuilder(client.getLinks().get("users")).toString(),
+//					this);
+//		} else { // update
+//			return client.getHttpClient().update(
+//					new LinkBuilder(links.get("self")).toString(),
+//					this);
+//		}
+//	}
 
 	public void delete() throws IOException {
 		client.getHttpClient().delete(

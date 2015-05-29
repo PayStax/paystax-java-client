@@ -13,24 +13,17 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.paystax.client;
+package com.paystax.client.http;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.paystax.client.exception.PayStaxBadRequestException;
-import com.paystax.client.exception.PayStaxException;
-import com.paystax.client.exception.PayStaxForbiddenException;
-import com.paystax.client.exception.PayStaxNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.paystax.client.PayStaxError;
+import com.paystax.client.exception.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -40,13 +33,12 @@ import java.util.Map;
  *
  * @author Erik R. Jensen
  */
-public class HttpURLConnectionClient implements HttpClient, Serializable {
+@Slf4j
+public class URLConnectionRestClient extends JacksonRestClient implements Serializable {
 
 	private static final long serialVersionUID = -5275552394410711694L;
-	private static final Logger log = LoggerFactory.getLogger(HttpURLConnectionClient.class);
-
-	protected static ObjectMapper mapper = new ObjectMapper();
 	protected String authorization;
+	protected String url;
 
 	/**
 	 * Creates a new HTTP client.
@@ -54,10 +46,10 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	 * @param username the PayStax username
 	 * @param password the PayStax password
 	 */
-	public HttpURLConnectionClient(String username, String password) {
+	public URLConnectionRestClient(String url, String username, String password) {
 		authorization = username + ":" + password;
 		authorization = "Basic " + DatatypeConverter.printBase64Binary(authorization.getBytes(Charset.forName("UTF-8")));
-		mapper = new ObjectMapper();
+		this.url = url;
 	}
 
 	protected void logRequest(HttpURLConnection conn, String body) {
@@ -142,6 +134,7 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	 * @return the exception to throw
 	 * @throws IOException if an I/O error occurs
 	 */
+	@SuppressWarnings("unchecked")
 	protected IOException getError(IOException x, HttpURLConnection conn) throws IOException {
 		if (conn != null) {
 			String error = readError(conn);
@@ -150,19 +143,20 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 			}
 			int status = conn.getResponseCode();
 			switch (status) {
+				case 401:
+					return new PayStaxAuthenticationFailedException(error);
 				case 404:
 					return new PayStaxNotFoundException(error);
 				case 400:
 					if (error != null) {
-						List<Error> errors = mapper.readValue(error, mapper.getTypeFactory()
-								.constructCollectionType(List.class, PayStaxError.class));
-						return new PayStaxBadRequestException("Received error: " + error, errors);
+						return new PayStaxBadRequestException("Received error: " + error,
+								readValue(error, List.class, PayStaxError.class));
 					}
 					throw new PayStaxBadRequestException();
 				case 403:
 					return new PayStaxForbiddenException(error); // TODO
 				default:
-					return new PayStaxException(error);
+					return new PayStaxException(error, x);
 			}
 		}
 		return x;
@@ -177,13 +171,16 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	 * @throws IOException if an I/O error occurs
 	 */
 	protected HttpURLConnection setup(HttpMethod method, String url) throws IOException {
+		if (!url.startsWith("http")) {
+			url = this.url + url;
+		}
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 		conn.setRequestProperty("Authorization", authorization);
+		conn.setRequestProperty("Accept", "application/vnd.paystax.v1+json"); // TODO Make constant
+		conn.setRequestProperty("User-Agent", "PayStax Java Client"); // TODO Add Version
 		conn.setRequestMethod(method.toString());
 		conn.setConnectTimeout(120 * 1000); // 2 minutes // TODO Make configurable
 		conn.setReadTimeout(120 * 1000); // 2 minutes // TODO Make configurable
-		conn.setRequestProperty("Accept", "application/vnd.paystax.v1+json"); // TODO Make constant
-		conn.setRequestProperty("User-Agent", "PayStax Java Client"); // TODO Add Version
 		return conn;
 	}
 
@@ -210,46 +207,14 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 		}
 	}
 
-	public <T> T get(String url, T o) throws IOException {
-		HttpURLConnection conn = null;
-		InputStream in = null;
-		try {
-			conn = setup(HttpMethod.GET, url);
-			if (log.isDebugEnabled()) {
-				logRequest(conn, null);
-			}
-			conn.connect();
-			in = conn.getInputStream();
-			ObjectReader reader = mapper.readerForUpdating(o);
-			if (log.isDebugEnabled()) {
-				String res = readString(in);
-				logResponse(conn, res);
-				reader.readValue(res);
-			} else {
-				reader.readValue(in);
-			}
-			return o;
-		} catch (IOException x) {
-			throw getError(x, conn);
-		} finally {
-			cleanup(conn, in, null);
-		}
-	}
-
 	/**
-	 * Sends an HTTP GET request to retrieve an object.
-	 *
-	 * @param url the resource URL
-	 * @param clazz the type class
-	 * @param <T> the type
-	 * @return the object
-	 * @throws IOException if an I/O error occurs
+	 * {@inheritDoc}
 	 */
-	public <T> T get(String url, Class<T> clazz) throws IOException {
+	public <T> T get(String uri, T o) throws IOException {
 		HttpURLConnection conn = null;
 		InputStream in = null;
 		try {
-			conn = setup(HttpMethod.GET, url);
+			conn = setup(HttpMethod.GET, uri);
 			if (log.isDebugEnabled()) {
 				logRequest(conn, null);
 			}
@@ -258,9 +223,9 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 			if (log.isDebugEnabled()) {
 				String res = readString(in);
 				logResponse(conn, res);
-				return mapper.readValue(res, clazz);
+				return readValue(res, o);
 			} else {
-				return mapper.readValue(in, clazz);
+				return readValue(in, o);
 			}
 		} catch (IOException x) {
 			throw getError(x, conn);
@@ -270,33 +235,24 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	}
 
 	/**
-	 * Sends an HTTP GET request to retrieve an object.
-	 *
-	 * @param url the resource URL
-	 * @param clazz the type class
-	 * @param parameterClass the parameter type class
-	 * @param <T> the type
-	 * @param <S> the parameter type
-	 * @return the object
-	 * @throws IOException if an I/O error occurs
+	 * {@inheritDoc}
 	 */
-	public <T, S> T get(String url, Class<T> clazz, Class<S> parameterClass) throws IOException {
+	public <T> T get(String uri, Class<T> clazz) throws IOException {
 		HttpURLConnection conn = null;
 		InputStream in = null;
 		try {
-			conn = setup(HttpMethod.GET, url);
+			conn = setup(HttpMethod.GET, uri);
 			if (log.isDebugEnabled()) {
 				logRequest(conn, null);
 			}
 			conn.connect();
 			in = conn.getInputStream();
-			JavaType type = mapper.getTypeFactory().constructParametricType(clazz, parameterClass);
 			if (log.isDebugEnabled()) {
 				String res = readString(in);
 				logResponse(conn, res);
-				return mapper.readValue(res, type);
+				return readValue(res, clazz);
 			} else {
-				return mapper.readValue(in, type);
+				return readValue(in, clazz);
 			}
 		} catch (IOException x) {
 			throw getError(x, conn);
@@ -306,24 +262,46 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	}
 
 	/**
-	 * Sends an HTTP PUT request to update an object.
-	 *
-	 * @param url the resource URL
-	 * @param o the object to be updated
-	 * @param <T> the type
-	 * @throws IOException if an I/O error occurs
+	 * {@inheritDoc}
 	 */
-	public <T> T update(String url, T o) throws IOException {
+	public <T, S> T get(String uri, Class<T> clazz, Class<S> parameterClass) throws IOException {
+		HttpURLConnection conn = null;
+		InputStream in = null;
+		try {
+			conn = setup(HttpMethod.GET, uri);
+			if (log.isDebugEnabled()) {
+				logRequest(conn, null);
+			}
+			conn.connect();
+			in = conn.getInputStream();
+			if (log.isDebugEnabled()) {
+				String res = readString(in);
+				logResponse(conn, res);
+				return readValue(res, clazz, parameterClass);
+			} else {
+				return readValue(in, clazz, parameterClass);
+			}
+		} catch (IOException x) {
+			throw getError(x, conn);
+		} finally {
+			cleanup(conn, in, null);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public <T> T update(String uri, T o) throws IOException {
 		HttpURLConnection conn = null;
 		InputStream in = null;
 		OutputStream out = null;
 		try {
-			conn = setup(HttpMethod.GET, url);
+			conn = setup(HttpMethod.PUT, uri);
 			conn.setDoOutput(true);
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (log.isDebugEnabled()) {
-				String body = mapper.writeValueAsString(o);
+				String body = writeValue(o);
 				logRequest(conn, body);
 				conn.connect();
 				out = conn.getOutputStream();
@@ -331,17 +309,16 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 			} else {
 				conn.connect();
 				out = conn.getOutputStream();
-				mapper.writeValue(out, o);
+				writeValue(out, o);
 			}
 
 			in = conn.getInputStream();
-			ObjectReader reader = mapper.readerForUpdating(o);
 			if (log.isDebugEnabled()) {
 				String res = readString(in);
 				logResponse(conn, res);
-				reader.readValue(res);
+				readValue(res, o);
 			} else {
-				reader.readValue(in);
+				readValue(in, o);
 			}
 			return o;
 		} catch (IOException x) {
@@ -352,24 +329,20 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	}
 
 	/**
-	 * Sends an HTTP POST request to create an object.
-	 *
-	 * @param url the resource URL
-	 * @param o the object to be updated
-	 * @param <T> the type
-	 * @throws IOException if an I/O error occurs
+	 * {@inheritDoc}
 	 */
-	public <T> T create(String url, T o) throws IOException {
+	@Override
+	public <V, T> V create(String uri, T o, Class<V> clazz) throws IOException {
 		HttpURLConnection conn = null;
 		InputStream in = null;
 		OutputStream out = null;
 		try {
-			conn = setup(HttpMethod.GET, url);
+			conn = setup(HttpMethod.POST, uri);
 			conn.setDoOutput(true);
 			conn.setRequestProperty("Content-Type", "application/json");
 
 			if (log.isDebugEnabled()) {
-				String body = mapper.writeValueAsString(o);
+				String body = writeValue(o);
 				logRequest(conn, body);
 				conn.connect();
 				out = conn.getOutputStream();
@@ -377,19 +350,17 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 			} else {
 				conn.connect();
 				out = conn.getOutputStream();
-				mapper.writeValue(out, o);
+				writeValue(out, o);
 			}
 
 			in = conn.getInputStream();
-			ObjectReader reader = mapper.readerForUpdating(o);
 			if (log.isDebugEnabled()) {
 				String res = readString(in);
 				logResponse(conn, res);
-				reader.readValue(res);
+				return readValue(res, clazz);
 			} else {
-				reader.readValue(in);
+				return readValue(in, clazz);
 			}
-			return o;
 		} catch (IOException x) {
 			throw getError(x, conn);
 		} finally {
@@ -398,16 +369,14 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	}
 
 	/**
-	 * Sends an HTTP DELETE request to delete an resource.
-	 *
-	 * @param url the resource URL
-	 * @throws IOException if an I/O error occurs
+	 * {@inheritDoc}
 	 */
-	public void delete(String url) throws IOException {
+	@Override
+	public void delete(String uri) throws IOException {
 		HttpURLConnection conn = null;
 		InputStream in = null;
 		try {
-			conn = setup(HttpMethod.DELETE, url);
+			conn = setup(HttpMethod.DELETE, uri);
 			logRequest(conn, null);
 			conn.connect();
 			in = conn.getInputStream();
@@ -421,16 +390,14 @@ public class HttpURLConnectionClient implements HttpClient, Serializable {
 	}
 
 	/**
-	 * Sends an HTTP POST request to execute an action.
-	 *
-	 * @param url the URL to send the POST request to
-	 * @throws IOException if an I/O error occurs
+	 * {@inheritDoc}
 	 */
-	public void execute(String url) throws IOException {
+	@Override
+	public void execute(String uri) throws IOException {
 		HttpURLConnection conn = null;
 		InputStream in = null;
 		try {
-			conn = setup(HttpMethod.POST, url);
+			conn = setup(HttpMethod.POST, uri);
 			logRequest(conn, null);
 			conn.connect();
 			in = conn.getInputStream();

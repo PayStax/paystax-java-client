@@ -35,72 +35,72 @@ public class TestUtil {
 		return new PayStaxClient(URL, USERNAME, PASSWORD);
 	}
 
-	public static PayStaxUser newUser(PayStaxClient client) throws IOException {
-		PayStaxUser user = client.newUser()
-				.setUsername("unittest")
-				.setPassword("Password1!")
-				.setFirstName("Unit")
-				.setLastName("Test")
-				.setEmailAddress("unittest@paystax.com")
-				.addPermission("VIEW_FULL_ACCOUNT_NUMBER")
-				.addRole("ROLE_ACCOUNT_MANAGER")
-				.save();
-		assertNotNull(user.getCreatedDate());
-		assertNotNull(user.getLastModifiedDate());
-		return user;
-	}
-
-	public static PayStaxCustomer newCustomer(PayStaxClient client) throws IOException {
-		PayStaxCustomer customer = client.newCustomer()
-				.setIdentifier1("unittestid1")
-				.setIdentifier2("unittestid2")
-				.setFirstName("Unit")
-				.setLastName("Test")
-				.setFullName("Unit Test")
-				.setEmailAddress("unittest@paystax.com")
-				.save();
-		assertNotNull(customer.getCreatedDate());
-		assertNotNull(customer.getLastModifiedDate());
-		return customer;
-	}
-
-	public static PayStaxCard newVisaCard(PayStaxClient client, UUID customerId) throws IOException {
-		PayStaxCard card = client.newCard()
-				.setCustomerId(customerId)
-				.setCardType(CardType.VISA)
-				.setAccountNumber("4111111111111111")
-				.setExpirationDate("08/14")
-				.setCardholderName("John Doe")
-				.setPriority(1)
-				.setAddress(new PayStaxAddress().setAddressLine1("123 Test St")
-						.setAddressLine2("Suite 101")
-						.setCity("Pleasant Grove")
-						.setState("UT")
-						.setPostalCode("84062")
-						.setCountry("USA"))
-				.save();
-		assertNotNull(card.getCreatedDate());
-		assertNotNull(card.getLastModifiedDate());
-		return card;
-	}
-
-	public static PayStaxCard newMasterCard(PayStaxClient client, UUID customerId) throws IOException {
-		PayStaxCard card = client.newCard()
-				.setCustomerId(customerId)
-				.setCardType(CardType.MASTERCARD)
-				.setAccountNumber("5555555555554444")
-				.setExpirationDate("09/14")
-				.setCardholderName("Jane Doe")
-				.setPriority(2)
-				.setAddress(new PayStaxAddress().setAddressLine1("123 Test St")
-						.setAddressLine2("Suite 101")
-						.setCity("Pleasant Grove")
-						.setState("UT")
-						.setPostalCode("84062")
-						.setCountry("USA"))
-				.save();
-		assertNotNull(card.getCreatedDate());
-		assertNotNull(card.getLastModifiedDate());
-		return card;
-	}
+//	public static PayStaxUser newUser(PayStaxClient client) throws IOException {
+//		PayStaxUser user = client.newUser()
+//				.setUsername("unittest")
+//				.setPassword("Password1!")
+//				.setFirstName("Unit")
+//				.setLastName("Test")
+//				.setEmailAddress("unittest@paystax.com")
+//				.addPermission("VIEW_FULL_ACCOUNT_NUMBER")
+//				.addRole("ROLE_ACCOUNT_MANAGER")
+//				.save();
+//		assertNotNull(user.getCreatedDate());
+//		assertNotNull(user.getLastModifiedDate());
+//		return user;
+//	}
+//
+//	public static PayStaxCustomer newCustomer(PayStaxClient client) throws IOException {
+//		PayStaxCustomer customer = client.newCustomer()
+//				.setIdentifier1("unittestid1")
+//				.setIdentifier2("unittestid2")
+//				.setFirstName("Unit")
+//				.setLastName("Test")
+//				.setFullName("Unit Test")
+//				.setEmailAddress("unittest@paystax.com")
+//				.save();
+//		assertNotNull(customer.getCreatedDate());
+//		assertNotNull(customer.getLastModifiedDate());
+//		return customer;
+//	}
+//
+//	public static PayStaxCard newVisaCard(PayStaxClient client, UUID customerId) throws IOException {
+//		PayStaxCard card = client.newCard()
+//				.setCustomerId(customerId)
+//				.setCardType(CardType.VISA)
+//				.setAccountNumber("4111111111111111")
+//				.setExpirationDate("08/14")
+//				.setCardholderName("John Doe")
+//				.setPriority(1)
+//				.setAddress(new PayStaxAddress().setAddressLine1("123 Test St")
+//						.setAddressLine2("Suite 101")
+//						.setCity("Pleasant Grove")
+//						.setState("UT")
+//						.setPostalCode("84062")
+//						.setCountry("USA"))
+//				.save();
+//		assertNotNull(card.getCreatedDate());
+//		assertNotNull(card.getLastModifiedDate());
+//		return card;
+//	}
+//
+//	public static PayStaxCard newMasterCard(PayStaxClient client, UUID customerId) throws IOException {
+//		PayStaxCard card = client.newCard()
+//				.setCustomerId(customerId)
+//				.setCardType(CardType.MASTERCARD)
+//				.setAccountNumber("5555555555554444")
+//				.setExpirationDate("09/14")
+//				.setCardholderName("Jane Doe")
+//				.setPriority(2)
+//				.setAddress(new PayStaxAddress().setAddressLine1("123 Test St")
+//						.setAddressLine2("Suite 101")
+//						.setCity("Pleasant Grove")
+//						.setState("UT")
+//						.setPostalCode("84062")
+//						.setCountry("USA"))
+//				.save();
+//		assertNotNull(card.getCreatedDate());
+//		assertNotNull(card.getLastModifiedDate());
+//		return card;
+//	}
 }

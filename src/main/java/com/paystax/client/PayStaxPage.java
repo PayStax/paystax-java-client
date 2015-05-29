@@ -15,7 +15,12 @@
  */
 package com.paystax.client;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.paystax.client.http.QueryStringBuilder;
+import com.paystax.client.http.RestClient;
+import lombok.*;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -25,88 +30,47 @@ import java.util.Map;
 /**
  * @author Erik R. Jensen
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+@EqualsAndHashCode(exclude = {"links"})
 public class PayStaxPage<T> implements Serializable {
 
-	private static final long serialVersionUID = 1499037857536792009L;
+	private static final long serialVersionUID = 8067470993453933199L;
 
 	@JsonIgnore
-	protected PayStaxClient client;
-	@JsonIgnore
-	protected Class<T> clazz;
+	@JacksonInject("restClient")
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	protected RestClient restClient;
 
+	@Setter(AccessLevel.NONE)
 	protected List<T> content;
+
+	@Setter(AccessLevel.NONE)
 	protected Map<String, String> links;
+
+	@Setter(AccessLevel.NONE)
 	protected PayStaxPageMetadata page;
 
-	public PayStaxPage() {}
-
-	public PayStaxPage(PayStaxClient client, Class<T> clazz) {
-		this.client = client;
-		this.clazz = clazz;
-	}
-
-	public Class<T> getClazz() {
-		return clazz;
-	}
-
-	public void setClazz(Class<T> clazz) {
-		this.clazz = clazz;
-	}
-
-	public PayStaxClient getClient() {
-		return client;
-	}
-
-	public void setClient(PayStaxClient client) {
-		this.client = client;
-	}
-
-	public List<T> getContent() {
-		return content;
-	}
-
-	public Map<String, String> getLinks() {
-		return links;
-	}
-
-	public PayStaxPageMetadata getPage() {
-		return page;
+	public boolean hasNext() {
+		return links.containsKey("next");
 	}
 
 	@SuppressWarnings("unchecked")
 	public PayStaxPage<T> next() throws IOException {
-		if (links.get("next") != null) {
-			PayStaxPage<T> page = client.getHttpClient().get(
-					new LinkBuilder(links.get("next")).toString(),
-					PayStaxPage.class,
-					clazz);
-			page.setClient(client);
-			page.setClazz(clazz);
-			return page;
-		}
-		return this;
+		return hasNext()
+				? restClient.get(links.get("next"), PayStaxPage.class, PayStaxAccount.class)
+				: this;
+	}
+
+	public boolean hasPrev() {
+		return links.containsKey("prev");
 	}
 
 	@SuppressWarnings("unchecked")
 	public PayStaxPage<T> prev() throws IOException {
-		if (links.get("prev") != null) {
-			PayStaxPage<T> page = client.getHttpClient().get(
-					new LinkBuilder(links.get("prev")).toString(),
-					PayStaxPage.class,
-					clazz);
-			page.setClient(client);
-			page.setClazz(clazz);
-			return page;
-		}
-		return this;
-	}
-
-	@Override
-	public String toString() {
-		return "PayStaxPage{" +
-				"content=" + content +
-				", links=" + links +
-				", page=" + page +
-				'}';
+		return hasPrev()
+				? restClient.get(links.get("prev"), PayStaxPage.class, PayStaxAccount.class)
+				: this;
 	}
 }

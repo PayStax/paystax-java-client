@@ -15,36 +15,20 @@
  */
 package com.paystax.client;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
+
 /**
  * @author Erik R. Jensen
  */
+@Data
 public class PayStaxPageMetadata {
 
+	@Setter(AccessLevel.NONE)
 	private int number;
+	@Setter(AccessLevel.NONE)
 	private int pages;
+	@Setter(AccessLevel.NONE)
 	private long count;
-
-	public int getNumber() {
-		return number;
-	}
-
-	public void setNumber(int number) {
-		this.number = number;
-	}
-
-	public int getPages() {
-		return pages;
-	}
-
-	public void setPages(int pages) {
-		this.pages = pages;
-	}
-
-	public long getCount() {
-		return count;
-	}
-
-	public void setCount(long count) {
-		this.count = count;
-	}
 }

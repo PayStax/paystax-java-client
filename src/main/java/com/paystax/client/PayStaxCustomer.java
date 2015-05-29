@@ -162,17 +162,17 @@ public class PayStaxCustomer implements Serializable {
 		return this;
 	}
 
-	public PayStaxCustomer save() throws IOException {
-		if (id == null) { // create
-			return client.getHttpClient().create(
-					new LinkBuilder(client.getLinks().get("customers")).toString(),
-					this);
-		} else { // update
-			return client.getHttpClient().update(
-					new LinkBuilder(links.get("self")).toString(),
-					this);
-		}
-	}
+//	public PayStaxCustomer save() throws IOException {
+//		if (id == null) { // create
+//			return client.getHttpClient().create(
+//					new LinkBuilder(client.getLinks().get("customers")).toString(),
+//					this);
+//		} else { // update
+//			return client.getHttpClient().update(
+//					new LinkBuilder(links.get("self")).toString(),
+//					this);
+//		}
+//	}
 
 	public void delete() throws IOException {
 		client.getHttpClient().delete(links.get("self"));
@@ -184,8 +184,8 @@ public class PayStaxCustomer implements Serializable {
 		PayStaxPage<PayStaxCard> cards = client.getHttpClient().get(
 				new LinkBuilder(links.get("cards")).addQueryParameters(search).toString(),
 				PayStaxPage.class, PayStaxCard.class);
-		cards.setClient(client);
-		cards.setClazz(PayStaxCard.class);
+//		cards.setClient(client);
+//		cards.setClazz(PayStaxCard.class);
 		return cards;
 	}
 

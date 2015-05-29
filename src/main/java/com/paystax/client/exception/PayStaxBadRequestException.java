@@ -15,6 +15,8 @@
  */
 package com.paystax.client.exception;
 
+import com.paystax.client.PayStaxError;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class PayStaxBadRequestException extends PayStaxException {
 
 	private static final long serialVersionUID = -7372223617979515476L;
 
-	protected List<Error> errors = new ArrayList<Error>();
+	protected List<PayStaxError> errors = new ArrayList<PayStaxError>();
 
 	public PayStaxBadRequestException() {}
 
@@ -33,16 +35,16 @@ public class PayStaxBadRequestException extends PayStaxException {
 		super(message);
 	}
 
-	public PayStaxBadRequestException(String message, List<Error> errors) {
+	public PayStaxBadRequestException(String message, List<PayStaxError> errors) {
 		super(message);
 		this.errors = errors;
 	}
 
-	public List<Error> getErrors() {
+	public List<PayStaxError> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(List<Error> errors) {
+	public void setErrors(List<PayStaxError> errors) {
 		this.errors = errors;
 	}
 }

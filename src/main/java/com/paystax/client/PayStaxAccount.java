@@ -15,16 +15,18 @@
  */
 package com.paystax.client;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.paystax.client.exception.PayStaxForbiddenException;
+import com.paystax.client.http.RestClient;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -33,128 +35,40 @@ import java.util.UUID;
  * @author Erik R. Jensen
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PayStaxAccount implements LinkedResource, Serializable {
+@Data
+@Accessors(chain = true)
+public class PayStaxAccount implements Serializable {
 
-	private static final long serialVersionUID = 5889487704196401219L;
+	private static final long serialVersionUID = -5354120994888961403L;
 
 	@JsonIgnore
-	protected PayStaxClient client;
+	@JacksonInject("restClient")
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	protected RestClient restClient;
+
 	protected UUID id;
 	protected String site;
 	protected String companyName;
-	protected Date createdDate;
-	protected Date lastModifiedDate;
-	protected Map<String, String> links = new HashMap<String, String>();
 
-	public PayStaxAccount() {}
-
-	public PayStaxAccount(PayStaxClient client) {
-		this.client = client;
-	}
-
-	public void setClient(PayStaxClient client) {
-		this.client = client;
-	}
-
-	public PayStaxClient getClient() {
-		return client;
-	}
-
-	public UUID getId() {
-		return id;
-	}
-
-	public PayStaxAccount setId(UUID id) {
-		this.id = id;
-		return this;
-	}
-
-	public String getSite() {
-		return site;
-	}
-
-	public PayStaxAccount setSite(String site) {
-		this.site = site;
-		return this;
-	}
-
-	public String getCompanyName() {
-		return companyName;
-	}
-
-	public PayStaxAccount setCompanyName(String companyName) {
-		this.companyName = companyName;
-		return this;
-	}
+	@Setter(AccessLevel.NONE)
+	protected PayStaxAuditData auditData;
 
 	@JsonIgnore
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	@JsonProperty
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	@JsonIgnore
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	@JsonProperty
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	@JsonIgnore
-	public Map<String, String> getLinks() {
-		return links;
-	}
-
-	@JsonProperty
-	public void setLinks(Map<String, String> links) {
-		this.links = links;
+	public PayStaxAuditData getAuditData() {
+		return auditData;
 	}
 
 	public PayStaxAccount save() throws IOException {
-		if (id == null) { // create
-			if (!client.getLinks().containsKey("accounts")) {
-				throw new PayStaxForbiddenException("You do not have permission to create new accounts");
-			}
-			return client.getHttpClient().create(
-					new LinkBuilder(client.getLinks().get("accounts")).toString(),
-					this);
-		} else {
-			return client.getHttpClient().update(
-					new LinkBuilder(links.get("self")).toString(),
-					this);
+		if (id == null) { // New account
+			restClient.create("/accounts", this, getClass());
+		} else { // Update account
+			restClient.update("/accounts/" + id, this);
 		}
+		return this;
 	}
 
-	@Override
-	public String toString() {
-		return "PayStaxAccount{" +
-				"id=" + id +
-				", site='" + site + '\'' +
-				", companyName='" + companyName + '\'' +
-				'}';
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		PayStaxAccount that = (PayStaxAccount) o;
-		return id.equals(that.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return id.hashCode();
+	public PayStaxAccount refresh() throws IOException {
+		return restClient.get("/accounts/" + id, this);
 	}
 }

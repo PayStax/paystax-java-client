@@ -27,8 +27,6 @@ public class PayStaxCardSearch extends PayStaxSearch<PayStaxCardSearch> {
 
 	private UUID customerId;
 
-	private String accountNumber;
-
 	private String lastFourDigits;
 
 	private CardType cardType;
@@ -45,15 +43,6 @@ public class PayStaxCardSearch extends PayStaxSearch<PayStaxCardSearch> {
 
 	public PayStaxCardSearch setCustomerId(UUID customerId) {
 		this.customerId = customerId;
-		return this;
-	}
-
-	public String getAccountNumber() {
-		return accountNumber;
-	}
-
-	public PayStaxCardSearch setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
 		return this;
 	}
 
