@@ -49,8 +49,8 @@ public class PayStaxClient implements Serializable {
 		return restClient.get("/account", PayStaxAccount.class);
 	}
 
-	public PayStaxAccount getAccount(UUID id) throws IOException {
-		return restClient.get("/accounts/" + id, PayStaxAccount.class);
+	public PayStaxAccount getAccount(UUID accountId) throws IOException {
+		return restClient.get("/accounts/" + accountId, PayStaxAccount.class);
 	}
 
 	public PayStaxAccountSearch accountSearch() {
@@ -65,116 +65,24 @@ public class PayStaxClient implements Serializable {
 		restClient.delete("/accounts/" + accountId);
 	}
 
-//	/**
-//	 * This method will issue a reset to PayStax which will delete all data except for the account itself and
-//	 * the authenticated user which issues the reset call. This feature is disabled in the PayStax production
-//	 * environment, but is enabled in the test environment to help facilitate integration testing.
-//	 *
-//	 * @throws IOException if an error occurs
-//	 */
-//	public void reset() throws IOException {
-//		init();
-//		if (!links.containsKey("reset")) {
-//			throw new PayStaxForbiddenException();
-//		}
-//		httpClient.execute(links.get("reset"));
-//	}
-//
-//	public PayStaxUser newUser() {
-//		init();
-//		return new PayStaxUser(this);
-//	}
-//
-//	@SuppressWarnings("unchecked")
-//	public PayStaxPage<PayStaxUser> search(PayStaxUserSearch search) throws IOException {
-//		init();
-//		PayStaxPage<PayStaxUser> users = httpClient.get(
-//				new LinkBuilder(links.get("users")).addQueryParameters(search).toString(),
-//				PayStaxPage.class, PayStaxUser.class);
-//		users.setClient(this);
-//		users.setClazz(PayStaxUser.class);
-//		return users;
-//	}
-//
-//	public PayStaxPage<PayStaxUser> users() throws IOException {
-//		return search(new PayStaxUserSearch());
-//	}
-//
-//	public PayStaxUser getUser(UUID userId) throws IOException {
-//		init();
-//		PayStaxUser user = httpClient.get(
-//				new LinkBuilder(links.get("user")).expand(userId).toString(),
-//				PayStaxUser.class);
-//		user.setClient(this);
-//		return user;
-//	}
-//
-//	public PayStaxCustomer newCustomer() {
-//		init();
-//		return new PayStaxCustomer(this);
-//	}
-//
-//	@SuppressWarnings("unchecked")
-//	public PayStaxPage<PayStaxCustomer> search(PayStaxCustomerSearch search) throws IOException {
-//		init();
-//		PayStaxPage<PayStaxCustomer> customers = httpClient.get(
-//				new LinkBuilder(links.get("customers")).addQueryParameters(search).toString(),
-//				PayStaxPage.class, PayStaxCustomer.class);
-//		customers.setClient(this);
-//		customers.setClazz(PayStaxCustomer.class);
-//		return customers;
-//	}
-//
-//	public PayStaxPage<PayStaxCustomer> customers() throws IOException {
-//		return search(new PayStaxCustomerSearch());
-//	}
-//
-//	public PayStaxCustomer getCustomer(UUID customerId) throws IOException {
-//		init();
-//		PayStaxCustomer customer = httpClient.get(
-//				new LinkBuilder(links.get("customer")).expand(customerId).toString(),
-//				PayStaxCustomer.class);
-//		customer.setClient(this);
-//		return customer;
-//	}
-//
-//	public PayStaxCard newCard() {
-//		init();
-//		return new PayStaxCard(this);
-//	}
-//
-//	@SuppressWarnings("unchecked")
-//	public PayStaxPage<PayStaxCard> search(PayStaxCardSearch search) throws IOException {
-//		init();
-//		PayStaxPage<PayStaxCard> cards = httpClient.get(
-//				new LinkBuilder(links.get("cards")).addQueryParameters(search).toString(),
-//				PayStaxPage.class, PayStaxCard.class);
-//		cards.setClient(this);
-//		cards.setClazz(PayStaxCard.class);
-//		return cards;
-//	}
-//
-//	public PayStaxPage<PayStaxCard> cards() throws IOException {
-//		return search(new PayStaxCardSearch());
-//	}
-//
-//	public PayStaxCard getCard(UUID customerId, UUID cardId) throws IOException {
-//		init();
-//		PayStaxCard card = httpClient.get(
-//				new LinkBuilder(links.get("card")).expand(customerId, cardId).toString(),
-//				PayStaxCard.class);
-//		card.setClient(this);
-//		return card;
-//	}
-//
-//	@Override
-//	public String toString() {
-//		return "PayStaxClient{" +
-//				"url='" + url + '\'' +
-//				", accountId=" + accountId +
-//				", companyName='" + companyName + '\'' +
-//				", links=" + links +
-//				'}';
-//	}
+	public PayStaxUserAccount getUserAccount() throws IOException {
+		return restClient.get("/user", PayStaxUserAccount.class);
+	}
+
+	public PayStaxUserAccount getUserAccount(UUID userAccountId) throws IOException {
+		return restClient.get("/users/" + userAccountId, PayStaxUserAccount.class);
+	}
+
+	public PayStaxUserAccountSearch userAccountSearch() {
+		return new PayStaxUserAccountSearch(restClient);
+	}
+
+	public PayStaxUserAccount newUserAccount() {
+		return new PayStaxUserAccount(restClient);
+	}
+
+	public void deleteUserAccount(UUID userAccountId) throws IOException {
+		restClient.delete("/users/" + userAccountId);
+	}
 
 }

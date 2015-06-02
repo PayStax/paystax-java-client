@@ -368,6 +368,43 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 		}
 	}
 
+	@Override
+	public <T> T create(String uri, T o) throws IOException {
+		HttpURLConnection conn = null;
+		InputStream in = null;
+		OutputStream out = null;
+		try {
+			conn = setup(HttpMethod.POST, uri);
+			conn.setDoOutput(true);
+			conn.setRequestProperty("Content-Type", "application/json");
+
+			if (log.isDebugEnabled()) {
+				String body = writeValue(o);
+				logRequest(conn, body);
+				conn.connect();
+				out = conn.getOutputStream();
+				out.write(body.getBytes(Charset.forName("UTF-8")));
+			} else {
+				conn.connect();
+				out = conn.getOutputStream();
+				writeValue(out, o);
+			}
+
+			in = conn.getInputStream();
+			if (log.isDebugEnabled()) {
+				String res = readString(in);
+				logResponse(conn, res);
+				return readValue(res, o);
+			} else {
+				return readValue(in, o);
+			}
+		} catch (IOException x) {
+			throw getError(x, conn);
+		} finally {
+			cleanup(conn, in, out);
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

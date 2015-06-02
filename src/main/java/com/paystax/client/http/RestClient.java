@@ -89,6 +89,18 @@ public interface RestClient extends Serializable {
 	<V, T> V create(String uri, T o, Class<V> clazz) throws IOException;
 
 	/**
+	 * Sends an HTTP POST request to create a new instance. The response is loaded back into the request
+	 * object passed into the method.
+	 *
+	 * @param uri the URI to POST
+	 * @param o the request object
+	 * @param <T> the type of the request object
+	 * @return the populated request object for convenience
+	 * @throws IOException if an error occurs
+	 */
+	<T> T create(String uri, T o) throws IOException;
+
+	/**
 	 * Sends an HTTP DELETE request to delete an instance.
 	 *
 	 * @param uri the URL to DELETE

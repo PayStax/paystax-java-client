@@ -19,10 +19,7 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.paystax.client.http.RestClient;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.IOException;
@@ -34,9 +31,11 @@ import java.util.UUID;
  *
  * @author Erik R. Jensen
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @Accessors(chain = true)
+@EqualsAndHashCode(exclude = {"restClient"})
+@ToString(exclude = {"restClient"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PayStaxAccount implements Serializable {
 
 	private static final long serialVersionUID = -5354120994888961403L;
@@ -60,11 +59,7 @@ public class PayStaxAccount implements Serializable {
 	}
 
 	public PayStaxAccount save() throws IOException {
-		if (id == null) { // New account
-			restClient.create("/accounts", this, getClass());
-		} else { // Update account
-			restClient.update("/accounts/" + id, this);
-		}
+		restClient.update("/accounts/" + id, this);
 		return this;
 	}
 
