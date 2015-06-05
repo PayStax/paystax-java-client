@@ -15,9 +15,13 @@
  */
 package com.paystax.client;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.paystax.client.http.RestClient;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -31,13 +35,21 @@ import java.util.UUID;
  *
  * @author Erik R. Jensen
  */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(exclude = {"restClient"})
+@ToString(exclude = {"restClient"})
 @JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 public class PayStaxCustomer implements Serializable {
 
-	private static final long serialVersionUID = 6175764972549844777L;
+	private static final long serialVersionUID = 7925218385785128677L;
 
 	@JsonIgnore
-	protected PayStaxClient client;
+	@JacksonInject("restClient")
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	protected RestClient restClient;
 
 	protected UUID id;
 	protected String identifier1;
@@ -46,180 +58,29 @@ public class PayStaxCustomer implements Serializable {
 	protected String lastName;
 	protected String fullName;
 	protected String emailAddress;
-	protected Date createdDate;
-	protected Date lastModifiedDate;
-	protected Map<String, String> links = new HashMap<String, String>();
 
-	public PayStaxCustomer() {}
+	@Setter(AccessLevel.NONE)
+	protected PayStaxAuditData auditData;
 
-	public PayStaxCustomer(PayStaxClient client) {
-		this.client = client;
-	}
-
-	public PayStaxClient getClient() {
-		return client;
-	}
-
-	public void setClient(PayStaxClient client) {
-		this.client = client;
-	}
-
-	public UUID getId() {
-		return id;
-	}
-
-	public PayStaxCustomer setId(UUID id) {
-		this.id = id;
-		return this;
-	}
-
-	public String getIdentifier1() {
-		return identifier1;
-	}
-
-	public PayStaxCustomer setIdentifier1(String identifier1) {
-		this.identifier1 = identifier1;
-		return this;
-	}
-
-	public String getIdentifier2() {
-		return identifier2;
-	}
-
-	public PayStaxCustomer setIdentifier2(String identifier2) {
-		this.identifier2 = identifier2;
-		return this;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public PayStaxCustomer setFirstName(String firstName) {
-		this.firstName = firstName;
-		return this;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public PayStaxCustomer setLastName(String lastName) {
-		this.lastName = lastName;
-		return this;
-	}
-
-	public String getFullName() {
-		return fullName;
-	}
-
-	public PayStaxCustomer setFullName(String fullName) {
-		this.fullName = fullName;
-		return this;
-	}
-
-	public String getEmailAddress() {
-		return emailAddress;
-	}
-
-	public PayStaxCustomer setEmailAddress(String emailAddress) {
-		this.emailAddress = emailAddress;
-		return this;
+	protected PayStaxCustomer(RestClient restClient) {
+		this.restClient = restClient;
 	}
 
 	@JsonIgnore
-	public Date getCreatedDate() {
-		return createdDate;
+	public PayStaxAuditData getAuditData() {
+		return auditData;
 	}
 
-	@JsonProperty
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	@JsonIgnore
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	@JsonProperty
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	@JsonIgnore
-	public Map<String, String> getLinks() {
-		return links;
-	}
-
-	@JsonProperty
-	public void setLinks(Map<String, String> links) {
-		this.links = links;
+	public PayStaxCustomer save() throws IOException {
+		if (id == null) { // New customer
+			restClient.create("/customers", this);
+		} else { // Update customer
+			restClient.update("/customers/" + id, this);
+		}
+		return this;
 	}
 
 	public PayStaxCustomer refresh() throws IOException {
-		client.getHttpClient().get(links.get("self"), this);
-		return this;
-	}
-
-//	public PayStaxCustomer save() throws IOException {
-//		if (id == null) { // create
-//			return client.getHttpClient().create(
-//					new LinkBuilder(client.getLinks().get("customers")).toString(),
-//					this);
-//		} else { // update
-//			return client.getHttpClient().update(
-//					new LinkBuilder(links.get("self")).toString(),
-//					this);
-//		}
-//	}
-
-	public void delete() throws IOException {
-		client.getHttpClient().delete(links.get("self"));
-	}
-
-	@SuppressWarnings("unchecked")
-	public PayStaxPage<PayStaxCard> search(PayStaxCardSearch search) throws IOException {
-		search.setCustomerId(getId());
-		PayStaxPage<PayStaxCard> cards = client.getHttpClient().get(
-				new LinkBuilder(links.get("cards")).addQueryParameters(search).toString(),
-				PayStaxPage.class, PayStaxCard.class);
-//		cards.setClient(client);
-//		cards.setClazz(PayStaxCard.class);
-		return cards;
-	}
-
-	public PayStaxPage<PayStaxCard> cards() throws IOException {
-		return search(new PayStaxCardSearch());
-	}
-
-	@Override
-	public String toString() {
-		return "PayStaxCustomer{" +
-				"id=" + id +
-				", identifier1='" + identifier1 + '\'' +
-				", identifier2='" + identifier2 + '\'' +
-				", firstName='" + firstName + '\'' +
-				", lastName='" + lastName + '\'' +
-				", fullName='" + fullName + '\'' +
-				", emailAddress='" + emailAddress + '\'' +
-				'}';
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		PayStaxCustomer that = (PayStaxCustomer) o;
-		return id.equals(that.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return id.hashCode();
+		return restClient.get("/customers/" + id, this);
 	}
 }

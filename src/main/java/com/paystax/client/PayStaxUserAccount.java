@@ -37,6 +37,7 @@ import java.util.*;
 @EqualsAndHashCode(exclude = {"password", "restClient"})
 @ToString(exclude = {"password", "restClient"})
 @JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 public class PayStaxUserAccount implements Serializable {
 
 	private static final long serialVersionUID = -4985093425300206829L;
@@ -61,8 +62,6 @@ public class PayStaxUserAccount implements Serializable {
 
 	@Setter(AccessLevel.NONE)
 	protected PayStaxAuditData auditData;
-
-	public PayStaxUserAccount() {}
 
 	protected PayStaxUserAccount(RestClient restClient) {
 		this.restClient = restClient;

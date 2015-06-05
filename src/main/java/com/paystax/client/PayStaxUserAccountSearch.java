@@ -44,22 +44,22 @@ public class PayStaxUserAccountSearch extends PayStaxSearch<PayStaxUserAccountSe
 		this.restClient = restClient;
 	}
 
-	private String usernameEquals;
-	private String usernameStartsWith;
-	private String usernameContains;
-	private String firstNameEquals;
-	private String firstNameStartsWith;
-	private String firstNameContains;
-	private String lastNameEquals;
-	private String lastNameStartsWith;
-	private String lastNameContains;
-	private String emailAddressEquals;
-	private String emailAddressStartsWith;
-	private String emailAddressContains;
+	protected String usernameEquals;
+	protected String usernameStartsWith;
+	protected String usernameContains;
+	protected String firstNameEquals;
+	protected String firstNameStartsWith;
+	protected String firstNameContains;
+	protected String lastNameEquals;
+	protected String lastNameStartsWith;
+	protected String lastNameContains;
+	protected String emailAddressEquals;
+	protected String emailAddressStartsWith;
+	protected String emailAddressContains;
 
 	@SuppressWarnings("unchecked")
 	public PayStaxPage<PayStaxUserAccount> search() throws IOException {
-		String uri = "/accounts?" + new QueryStringBuilder().add(this).toQueryString();
+		String uri = "/users?" + new QueryStringBuilder().add(this).toQueryString();
 		return restClient.get(uri, PayStaxPage.class, PayStaxUserAccount.class);
 	}
 }

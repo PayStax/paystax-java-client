@@ -15,6 +15,8 @@
  */
 package com.paystax.client;
 
+import com.paystax.client.gateway.PayStaxGatewayType;
+import com.paystax.client.gateway.PayStaxPayvisionGateway;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -34,13 +36,19 @@ import static org.junit.Assert.*;
  */
 public class PayStaxClientTest {
 
-	private static Logger log = LoggerFactory.getLogger(PayStaxClientTest.class);
 	private PayStaxClient client;
 
-	@Test
-	public void test() {
+	@Before
+	public void testConstructor() {
 		client = new PayStaxClient(URL, USERNAME, PASSWORD);
 	}
+
+//	@Test
+//	public void testNewGateway() throws IOException {
+//		PayStaxPayvisionGateway payvisionGateway = client.newGateway(PayStaxGatewayType.PAYVISION);
+//	}
+
+
 
 //	@Before
 //	public void before() throws IOException {

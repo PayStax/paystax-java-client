@@ -15,173 +15,56 @@
  */
 package com.paystax.client;
 
+import com.paystax.client.http.QueryStringBuilder;
+import com.paystax.client.http.RestClient;
+import lombok.*;
+import lombok.experimental.Accessors;
+
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * @author Erik R. Jensen
  */
-public class PayStaxCustomerSearch extends PayStaxSearch<PayStaxCustomerSearch> {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Accessors(chain = true)
+public class PayStaxCustomerSearch extends PayStaxSearch<PayStaxCustomerSearch> implements Serializable {
 
 	private static final long serialVersionUID = 1496118278694634588L;
 
-	private UUID id;
-	private String identifier1;
-	private String identifier1Contains;
-	private String identifier1StartsWith;
-	private String identifier2;
-	private String identifier2Contains;
-	private String identifier2StartsWith;
-	private String firstNameContains;
-	private String firstNameStartsWith;
-	private String lastNameContains;
-	private String lastNameStartsWith;
-	private String fullNameContains;
-	private String fullNameStartsWith;
-	private String emailAddress;
-	private String emailAddressContains;
-	private String emailAddressStartsWith;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	protected RestClient restClient;
 
-	public UUID getId() {
-		return id;
+	protected PayStaxCustomerSearch(RestClient restClient) {
+		this.restClient = restClient;
 	}
 
-	public PayStaxCustomerSearch setId(UUID id) {
-		this.id = id;
-		return this;
-	}
+	protected String identifier1Equals;
+	protected String identifier1Contains;
+	protected String identifier1StartsWith;
+	protected String identifier2Equals;
+	protected String identifier2Contains;
+	protected String identifier2StartsWith;
+	protected String firstNameEquals;
+	protected String firstNameContains;
+	protected String firstNameStartsWith;
+	protected String lastNameEquals;
+	protected String lastNameContains;
+	protected String lastNameStartsWith;
+	protected String fullNameEquals;
+	protected String fullNameContains;
+	protected String fullNameStartsWith;
+	protected String emailAddressEquals;
+	protected String emailAddressContains;
+	protected String emailAddressStartsWith;
 
-	public String getIdentifier1() {
-		return identifier1;
-	}
-
-	public PayStaxCustomerSearch setIdentifier1(String identifier1) {
-		this.identifier1 = identifier1;
-		return this;
-	}
-
-	public String getIdentifier1Contains() {
-		return identifier1Contains;
-	}
-
-	public PayStaxCustomerSearch setIdentifier1Contains(String identifier1Contains) {
-		this.identifier1Contains = identifier1Contains;
-		return this;
-	}
-
-	public String getIdentifier1StartsWith() {
-		return identifier1StartsWith;
-	}
-
-	public PayStaxCustomerSearch setIdentifier1StartsWith(String identifier1StartsWith) {
-		this.identifier1StartsWith = identifier1StartsWith;
-		return this;
-	}
-
-	public String getIdentifier2() {
-		return identifier2;
-	}
-
-	public PayStaxCustomerSearch setIdentifier2(String identifier2) {
-		this.identifier2 = identifier2;
-		return this;
-	}
-
-	public String getIdentifier2Contains() {
-		return identifier2Contains;
-	}
-
-	public PayStaxCustomerSearch setIdentifier2Contains(String identifier2Contains) {
-		this.identifier2Contains = identifier2Contains;
-		return this;
-	}
-
-	public String getIdentifier2StartsWith() {
-		return identifier2StartsWith;
-	}
-
-	public PayStaxCustomerSearch setIdentifier2StartsWith(String identifier2StartsWith) {
-		this.identifier2StartsWith = identifier2StartsWith;
-		return this;
-	}
-
-	public String getFirstNameContains() {
-		return firstNameContains;
-	}
-
-	public PayStaxCustomerSearch setFirstNameContains(String firstNameContains) {
-		this.firstNameContains = firstNameContains;
-		return this;
-	}
-
-	public String getFirstNameStartsWith() {
-		return firstNameStartsWith;
-	}
-
-	public PayStaxCustomerSearch setFirstNameStartsWith(String firstNameStartsWith) {
-		this.firstNameStartsWith = firstNameStartsWith;
-		return this;
-	}
-
-	public String getLastNameContains() {
-		return lastNameContains;
-	}
-
-	public PayStaxCustomerSearch setLastNameContains(String lastNameContains) {
-		this.lastNameContains = lastNameContains;
-		return this;
-	}
-
-	public String getLastNameStartsWith() {
-		return lastNameStartsWith;
-	}
-
-	public PayStaxCustomerSearch setLastNameStartsWith(String lastNameStartsWith) {
-		this.lastNameStartsWith = lastNameStartsWith;
-		return this;
-	}
-
-	public String getFullNameContains() {
-		return fullNameContains;
-	}
-
-	public PayStaxCustomerSearch setFullNameContains(String fullNameContains) {
-		this.fullNameContains = fullNameContains;
-		return this;
-	}
-
-	public String getFullNameStartsWith() {
-		return fullNameStartsWith;
-	}
-
-	public PayStaxCustomerSearch setFullNameStartsWith(String fullNameStartsWith) {
-		this.fullNameStartsWith = fullNameStartsWith;
-		return this;
-	}
-
-	public String getEmailAddress() {
-		return emailAddress;
-	}
-
-	public PayStaxCustomerSearch setEmailAddress(String emailAddress) {
-		this.emailAddress = emailAddress;
-		return this;
-	}
-
-	public String getEmailAddressContains() {
-		return emailAddressContains;
-	}
-
-	public PayStaxCustomerSearch setEmailAddressContains(String emailAddressContains) {
-		this.emailAddressContains = emailAddressContains;
-		return this;
-	}
-
-	public String getEmailAddressStartsWith() {
-		return emailAddressStartsWith;
-	}
-
-	public PayStaxCustomerSearch setEmailAddressStartsWith(String emailAddressStartsWith) {
-		this.emailAddressStartsWith = emailAddressStartsWith;
-		return this;
+	@SuppressWarnings("unchecked")
+	public PayStaxPage<PayStaxCustomer> search() throws IOException {
+		String uri = "/customers?" + new QueryStringBuilder().add(this).toQueryString();
+		return restClient.get(uri, PayStaxPage.class, PayStaxCustomer.class);
 	}
 }

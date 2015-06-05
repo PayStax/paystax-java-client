@@ -15,11 +15,14 @@
  */
 package com.paystax.client;
 
+import com.paystax.client.gateway.PayStaxGateway;
 import com.paystax.client.http.URLConnectionRestClient;
 import com.paystax.client.http.RestClient;
+import com.paystax.client.payment.PayStaxPayment;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 /**
@@ -85,4 +88,77 @@ public class PayStaxClient implements Serializable {
 		restClient.delete("/users/" + userAccountId);
 	}
 
+	public PayStaxCustomer newCustomer() {
+		return new PayStaxCustomer(restClient);
+	}
+
+	public PayStaxCustomer getCustomer(UUID customerId) throws IOException {
+		return restClient.get("/customers/" + customerId, PayStaxCustomer.class);
+	}
+
+	public PayStaxCustomerSearch customerSearch() {
+		return new PayStaxCustomerSearch(restClient);
+	}
+
+	public void deleteCustomer(UUID customerId) throws IOException {
+		restClient.delete("/customers/" + customerId);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends PayStaxGateway> T newGateway(Class<T> clazz) throws IOException {
+		try {
+			return clazz.getConstructor(RestClient.class).newInstance(restClient);
+		} catch (IllegalAccessException x) {
+			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
+		} catch (InstantiationException x) {
+			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
+		} catch (NoSuchMethodException x) {
+			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
+		} catch (InvocationTargetException x) {
+			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
+		}
+	}
+
+	public <T extends PayStaxGateway> T getGateway(UUID gatewayId, Class<T> clazz) throws IOException {
+		return restClient.get("/gateways/" + gatewayId, clazz);
+	}
+
+	public PayStaxGateway getGateway(UUID gatewayId) throws IOException {
+		return restClient.get("/gateways/" + gatewayId, PayStaxGateway.class);
+	}
+
+	public PayStaxGatewaySearch gatewaySearch() {
+		return new PayStaxGatewaySearch(restClient);
+	}
+
+	public void deleteGateway(UUID gatewayId) throws IOException {
+		restClient.delete("/gateways/" + gatewayId);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends PayStaxPayment> T newPayment(Class<T> clazz) throws IOException {
+		try {
+			return clazz.getConstructor(RestClient.class).newInstance(restClient);
+		} catch (IllegalAccessException x) {
+			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
+		} catch (InstantiationException x) {
+			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
+		} catch (NoSuchMethodException x) {
+			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
+		} catch (InvocationTargetException x) {
+			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
+		}
+	}
+
+	public <T extends PayStaxPayment> T getPayment(UUID paymentId, Class<T> clazz) throws IOException {
+		return restClient.get("/payments/" + paymentId , clazz);
+	}
+
+	public PayStaxPayment getPayment(UUID paymentId) throws IOException {
+		return restClient.get("/payments/" + paymentId, PayStaxPayment.class);
+	}
+
+	public PayStaxPaymentSearch paymentSearch() {
+		return new PayStaxPaymentSearch(restClient);
+	}
 }
