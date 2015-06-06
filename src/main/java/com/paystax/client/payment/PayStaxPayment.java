@@ -2,7 +2,6 @@ package com.paystax.client.payment;
 
 import com.fasterxml.jackson.annotation.*;
 import com.paystax.client.PayStaxAuditData;
-import com.paystax.client.gateway.PayStaxPayvisionGateway;
 import com.paystax.client.http.RestClient;
 import lombok.*;
 
@@ -19,7 +18,7 @@ import java.util.UUID;
 @ToString(exclude = {"restClient"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSubTypes({
-		@JsonSubTypes.Type(value = PayStaxPayvisionGateway.class, name = "PAYVISION")})
+		@JsonSubTypes.Type(value = PayStaxCardPayment.class, name = "CARD")})
 @JsonTypeInfo(
 		use = JsonTypeInfo.Id.NAME,
 		include = JsonTypeInfo.As.PROPERTY,

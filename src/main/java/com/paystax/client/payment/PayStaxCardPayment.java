@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.paystax.client.CardType;
 import com.paystax.client.PayStaxAddress;
 import com.paystax.client.http.RestClient;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 /**
@@ -16,8 +13,8 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"securityCode", "accountNumber"})
+@ToString(callSuper = true, exclude = {"securityCode", "accountNumber"})
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeName("CARD")
@@ -27,11 +24,14 @@ public class PayStaxCardPayment extends PayStaxPayment<PayStaxCardPayment> {
 
 	protected CardType cardType;
 	protected String accountNumber;
-	protected String lastFourDigits;
+	protected String securityCode;
 	private String expMonth;
 	private String expYear;
 	private String cardholderName;
 	private PayStaxAddress address;
+
+	@Setter(AccessLevel.NONE)
+	protected String lastFourDigits;
 
 	public PayStaxCardPayment(RestClient restClient) {
 		super(restClient);
