@@ -165,7 +165,7 @@ public class PayStaxClientTest {
 //	public void testSearchCustomers() throws IOException {
 //		PayStaxCustomer customer = newCustomer(client);
 //		PayStaxCustomerSearch search = new PayStaxCustomerSearch()
-//				.setIdentifier1("unittestid1");
+//				.setMerchantReference1("unittestid1");
 //		PayStaxPage<PayStaxCustomer> customers = client.search(search);
 //		assertEquals(1L, customers.getPage().getCount());
 //		assertEquals(0, customers.getPage().getNumber());

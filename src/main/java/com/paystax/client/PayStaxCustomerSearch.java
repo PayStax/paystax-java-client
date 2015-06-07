@@ -43,12 +43,12 @@ public class PayStaxCustomerSearch extends PayStaxSearch<PayStaxCustomerSearch> 
 		this.restClient = restClient;
 	}
 
-	protected String identifier1Equals;
-	protected String identifier1Contains;
-	protected String identifier1StartsWith;
-	protected String identifier2Equals;
-	protected String identifier2Contains;
-	protected String identifier2StartsWith;
+	protected String merchantReference1Equals;
+	protected String merchantReference1Contains;
+	protected String merchantReference1StartsWith;
+	protected String merchantReference2Equals;
+	protected String merchantReference2Contains;
+	protected String merchantReference2StartsWith;
 	protected String firstNameEquals;
 	protected String firstNameContains;
 	protected String firstNameStartsWith;

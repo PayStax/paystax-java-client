@@ -52,8 +52,8 @@ public class TestUtil {
 //
 //	public static PayStaxCustomer newCustomer(PayStaxClient client) throws IOException {
 //		PayStaxCustomer customer = client.newCustomer()
-//				.setIdentifier1("unittestid1")
-//				.setIdentifier2("unittestid2")
+//				.setMerchantReference1("unittestid1")
+//				.setMerchantReference2("unittestid2")
 //				.setFirstName("Unit")
 //				.setLastName("Test")
 //				.setFullName("Unit Test")

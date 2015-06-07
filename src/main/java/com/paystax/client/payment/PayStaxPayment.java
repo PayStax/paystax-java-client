@@ -50,6 +50,12 @@ public abstract class PayStaxPayment<T extends PayStaxPayment> implements Serial
 	protected String currency;
 
 	@Setter(AccessLevel.NONE)
+	protected String merchantReference;
+
+	@Setter(AccessLevel.NONE)
+	protected PayStaxPaymentStatus status;
+
+	@Setter(AccessLevel.NONE)
 	protected PayStaxAuditData auditData;
 
 	protected PayStaxPayment() {}
@@ -73,6 +79,12 @@ public abstract class PayStaxPayment<T extends PayStaxPayment> implements Serial
 	@SuppressWarnings("unchecked")
 	public T setCurrency(String currency) {
 		this.currency = currency;
+		return (T)this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public T setMerchantReference(String merchantReference) {
+		this.merchantReference = merchantReference;
 		return (T)this;
 	}
 
