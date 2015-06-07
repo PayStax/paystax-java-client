@@ -52,8 +52,7 @@ public class PayStaxCustomer implements Serializable {
 	protected RestClient restClient;
 
 	protected UUID id;
-	protected String merchantReference1;
-	protected String merchantReference2;
+	protected String merchantReference;
 	protected String firstName;
 	protected String lastName;
 	protected String fullName;
