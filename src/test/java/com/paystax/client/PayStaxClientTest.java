@@ -156,14 +156,14 @@ public class PayStaxClientTest {
 //
 //	@Test
 //	public void testNewCustomer() throws IOException {
-//		PayStaxCustomer customer = client.newCustomer();
+//		PayStaxCustomer customer = client.newPayer();
 //		assertEquals(client, customer.getClient());
 //		assertTrue(customer.getLinks().isEmpty());
 //	}
 //
 //	@Test
 //	public void testSearchCustomers() throws IOException {
-//		PayStaxCustomer customer = newCustomer(client);
+//		PayStaxCustomer customer = newPayer(client);
 //		PayStaxCustomerSearch search = new PayStaxCustomerSearch()
 //				.setMerchantReference1("unittestid1");
 //		PayStaxPage<PayStaxCustomer> customers = client.search(search);
@@ -174,7 +174,7 @@ public class PayStaxClientTest {
 //
 //	@Test
 //	public void testCustomers() throws IOException {
-//		PayStaxCustomer customer = newCustomer(client);
+//		PayStaxCustomer customer = newPayer(client);
 //		PayStaxPage<PayStaxCustomer> customers = client.customers();
 //		assertEquals(1L, customers.getPage().getCount());
 //		assertEquals(0, customers.getPage().getNumber());
@@ -183,8 +183,8 @@ public class PayStaxClientTest {
 //
 //	@Test
 //	public void testGetCustomer() throws IOException {
-//		PayStaxCustomer customer = newCustomer(client);
-//		PayStaxCustomer found = client.getCustomer(customer.getId());
+//		PayStaxCustomer customer = newPayer(client);
+//		PayStaxCustomer found = client.getPayer(customer.getId());
 //		assertEquals(customer, found);
 //	}
 //
@@ -197,7 +197,7 @@ public class PayStaxClientTest {
 //
 //	@Test
 //	public void testSearchCards() throws IOException {
-//		PayStaxCustomer customer = newCustomer(client);
+//		PayStaxCustomer customer = newPayer(client);
 //		PayStaxCard card1 = newVisaCard(client, customer.getId());
 //		PayStaxCard card2 = newMasterCard(client, customer.getId());
 //		PayStaxCardSearch search = new PayStaxCardSearch()
@@ -210,7 +210,7 @@ public class PayStaxClientTest {
 //
 //	@Test
 //	public void testSearchCardsPaging() throws IOException {
-//		PayStaxCustomer customer = newCustomer(client);
+//		PayStaxCustomer customer = newPayer(client);
 //		PayStaxCard card1 = newVisaCard(client, customer.getId());
 //		PayStaxCard card2 = newMasterCard(client, customer.getId());
 //		PayStaxCardSearch search = new PayStaxCardSearch()
@@ -227,7 +227,7 @@ public class PayStaxClientTest {
 //
 //	@Test
 //	public void testCards() throws IOException {
-//		PayStaxCustomer customer = newCustomer(client);
+//		PayStaxCustomer customer = newPayer(client);
 //		PayStaxCard card1 = newVisaCard(client, customer.getId());
 //		PayStaxCard card2 = newMasterCard(client, customer.getId());
 //		PayStaxPage<PayStaxCard> cards = client.cards();
@@ -238,7 +238,7 @@ public class PayStaxClientTest {
 //
 //	@Test
 //	public void testGetCard() throws IOException {
-//		PayStaxCustomer customer = newCustomer(client);
+//		PayStaxCustomer customer = newPayer(client);
 //		PayStaxCard card = newVisaCard(client, customer.getId());
 //		PayStaxCard found = client.getCard(customer.getId(), card.getId());
 //		assertEquals(card, found);

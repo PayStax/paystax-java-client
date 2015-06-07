@@ -22,7 +22,6 @@ import lombok.experimental.Accessors;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * @author Erik R. Jensen
@@ -31,7 +30,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Accessors(chain = true)
-public class PayStaxCustomerSearch extends PayStaxSearch<PayStaxCustomerSearch> implements Serializable {
+public class PayStaxPayerSearch extends PayStaxSearch<PayStaxPayerSearch> implements Serializable {
 
 	private static final long serialVersionUID = 1496118278694634588L;
 
@@ -39,7 +38,7 @@ public class PayStaxCustomerSearch extends PayStaxSearch<PayStaxCustomerSearch> 
 	@Setter(AccessLevel.NONE)
 	protected RestClient restClient;
 
-	protected PayStaxCustomerSearch(RestClient restClient) {
+	protected PayStaxPayerSearch(RestClient restClient) {
 		this.restClient = restClient;
 	}
 
@@ -60,8 +59,8 @@ public class PayStaxCustomerSearch extends PayStaxSearch<PayStaxCustomerSearch> 
 	protected String emailAddressStartsWith;
 
 	@SuppressWarnings("unchecked")
-	public PayStaxPage<PayStaxCustomer> search() throws IOException {
-		String uri = "/customers?" + new QueryStringBuilder().add(this).toQueryString();
-		return restClient.get(uri, PayStaxPage.class, PayStaxCustomer.class);
+	public PayStaxPage<PayStaxPayer> search() throws IOException {
+		String uri = "/payers?" + new QueryStringBuilder().add(this).toQueryString();
+		return restClient.get(uri, PayStaxPage.class, PayStaxPayer.class);
 	}
 }

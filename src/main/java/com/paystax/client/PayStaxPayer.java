@@ -18,20 +18,16 @@ package com.paystax.client;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.paystax.client.http.RestClient;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
- * Holds customer information.
+ * Holds payer information.
  *
  * @author Erik R. Jensen
  */
@@ -41,7 +37,7 @@ import java.util.UUID;
 @ToString(exclude = {"restClient"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class PayStaxCustomer implements Serializable {
+public class PayStaxPayer implements Serializable {
 
 	private static final long serialVersionUID = 7925218385785128677L;
 
@@ -61,7 +57,7 @@ public class PayStaxCustomer implements Serializable {
 	@Setter(AccessLevel.NONE)
 	protected PayStaxAuditData auditData;
 
-	protected PayStaxCustomer(RestClient restClient) {
+	protected PayStaxPayer(RestClient restClient) {
 		this.restClient = restClient;
 	}
 
@@ -70,16 +66,16 @@ public class PayStaxCustomer implements Serializable {
 		return auditData;
 	}
 
-	public PayStaxCustomer save() throws IOException {
-		if (id == null) { // New customer
-			restClient.create("/customers", this);
-		} else { // Update customer
-			restClient.update("/customers/" + id, this);
+	public PayStaxPayer save() throws IOException {
+		if (id == null) { // New payer
+			restClient.create("/payers", this);
+		} else { // Update payer
+			restClient.update("/payers/" + id, this);
 		}
 		return this;
 	}
 
-	public PayStaxCustomer refresh() throws IOException {
-		return restClient.get("/customers/" + id, this);
+	public PayStaxPayer refresh() throws IOException {
+		return restClient.get("/payers/" + id, this);
 	}
 }

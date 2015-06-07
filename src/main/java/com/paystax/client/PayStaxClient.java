@@ -88,20 +88,20 @@ public class PayStaxClient implements Serializable {
 		restClient.delete("/users/" + userAccountId);
 	}
 
-	public PayStaxCustomer newCustomer() {
-		return new PayStaxCustomer(restClient);
+	public PayStaxPayer newPayer() {
+		return new PayStaxPayer(restClient);
 	}
 
-	public PayStaxCustomer getCustomer(UUID customerId) throws IOException {
-		return restClient.get("/customers/" + customerId, PayStaxCustomer.class);
+	public PayStaxPayer getPayer(UUID payerId) throws IOException {
+		return restClient.get("/payers/" + payerId, PayStaxPayer.class);
 	}
 
-	public PayStaxCustomerSearch customerSearch() {
-		return new PayStaxCustomerSearch(restClient);
+	public PayStaxPayerSearch payerSearch() {
+		return new PayStaxPayerSearch(restClient);
 	}
 
-	public void deleteCustomer(UUID customerId) throws IOException {
-		restClient.delete("/customers/" + customerId);
+	public void deletePayer(UUID payerId) throws IOException {
+		restClient.delete("/payers/" + payerId);
 	}
 
 	@SuppressWarnings("unchecked")

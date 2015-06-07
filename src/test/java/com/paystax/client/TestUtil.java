@@ -50,8 +50,8 @@ public class TestUtil {
 //		return user;
 //	}
 //
-//	public static PayStaxCustomer newCustomer(PayStaxClient client) throws IOException {
-//		PayStaxCustomer customer = client.newCustomer()
+//	public static PayStaxCustomer newPayer(PayStaxClient client) throws IOException {
+//		PayStaxCustomer customer = client.newPayer()
 //				.setMerchantReference1("unittestid1")
 //				.setMerchantReference2("unittestid2")
 //				.setFirstName("Unit")
