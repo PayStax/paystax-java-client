@@ -73,6 +73,7 @@ public abstract class PayStaxPayment<T extends PayStaxPayment> implements Serial
 	@Setter(AccessLevel.NONE)
 	protected PayStaxAuditData auditData;
 
+	@Setter(AccessLevel.NONE)
 	protected PayStaxPaymentAction action;
 
 	protected PayStaxPayment() {}
@@ -102,6 +103,12 @@ public abstract class PayStaxPayment<T extends PayStaxPayment> implements Serial
 	@SuppressWarnings("unchecked")
 	public T setMerchantReference(String merchantReference) {
 		this.merchantReference = merchantReference;
+		return (T)this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public T setAction(PayStaxPaymentAction action) {
+		this.action = action;
 		return (T)this;
 	}
 
