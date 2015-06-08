@@ -75,6 +75,19 @@ public interface RestClient extends Serializable {
 	<T> T update(String uri, T o) throws IOException;
 
 	/**
+	 * Sends an HTTP POST request to issue a partial update. The response is loaded back into the given object.
+	 *
+	 * @param uri the URI to PATCH
+	 * @param clazz the response type
+	 * @param u the patch
+	 * @param <T> the type of the response
+	 * @param <U> the type of the patch
+	 * @return the updated instance for convenience
+	 * @throws IOException if an I/O error occurs
+	 */
+	<T,U> T patch(String uri, Class<T> clazz, U u) throws IOException;
+
+	/**
 	 * Sends an HTTP POST request to create a new instance. The response is loaded back into the last
 	 * parameter of the method.
 	 *

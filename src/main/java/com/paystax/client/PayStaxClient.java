@@ -19,6 +19,7 @@ import com.paystax.client.gateway.PayStaxGateway;
 import com.paystax.client.http.URLConnectionRestClient;
 import com.paystax.client.http.RestClient;
 import com.paystax.client.payment.PayStaxPayment;
+import com.paystax.client.payment.PayStaxPaymentAction;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -160,5 +161,13 @@ public class PayStaxClient implements Serializable {
 
 	public PayStaxPaymentSearch paymentSearch() {
 		return new PayStaxPaymentSearch(restClient);
+	}
+
+	public PayStaxPayment executePayment(final PayStaxPaymentAction action, UUID paymentId) throws IOException {
+		return restClient.patch("/payments/" + paymentId, PayStaxPayment.class, new Object() {
+			public PayStaxPaymentAction getAction() {
+				return action;
+			}
+		});
 	}
 }

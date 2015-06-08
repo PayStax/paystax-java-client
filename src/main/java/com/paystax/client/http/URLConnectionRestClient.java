@@ -37,6 +37,7 @@ import java.util.Map;
 public class URLConnectionRestClient extends JacksonRestClient implements Serializable {
 
 	private static final long serialVersionUID = -5275552394410711694L;
+	private static final Charset UTF8 = Charset.forName("UTF-8");
 	protected String authorization;
 	protected String url;
 
@@ -48,7 +49,7 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 	 */
 	public URLConnectionRestClient(String url, String username, String password) {
 		authorization = username + ":" + password;
-		authorization = "Basic " + DatatypeConverter.printBase64Binary(authorization.getBytes(Charset.forName("UTF-8")));
+		authorization = "Basic " + DatatypeConverter.printBase64Binary(authorization.getBytes(UTF8));
 		this.url = url;
 	}
 
@@ -92,7 +93,7 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 	 * @throws IOException if an I/O error occurs
 	 */
 	protected String readString(InputStream in) throws IOException {
-		InputStreamReader reader = new InputStreamReader(in, Charset.forName("UTF-8"));
+		InputStreamReader reader = new InputStreamReader(in, UTF8);
 		StringBuilder sb = new StringBuilder();
 		char[] buf = new char[8192];
 		for (int read = reader.read(buf); read >= 0; read = reader.read(buf)) {
@@ -305,7 +306,7 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 				logRequest(conn, body);
 				conn.connect();
 				out = conn.getOutputStream();
-				out.write(body.getBytes(Charset.forName("UTF-8")));
+				out.write(body.getBytes(UTF8));
 			} else {
 				conn.connect();
 				out = conn.getOutputStream();
@@ -321,6 +322,42 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 				readValue(in, o);
 			}
 			return o;
+		} catch (IOException x) {
+			throw getError(x, conn);
+		} finally {
+			cleanup(conn, in, out);
+		}
+	}
+
+	public <T,U> T patch(String uri, Class<T> clazz, U u) throws IOException {
+		HttpURLConnection conn = null;
+		InputStream in = null;
+		OutputStream out = null;
+		try {
+			conn = setup(HttpMethod.PATCH, uri);
+			conn.setDoInput(true);
+			conn.setRequestProperty("Content-Type", "application/json");
+
+			if (log.isDebugEnabled()) {
+				String body = writeValue(u);
+				logRequest(conn, body);
+				conn.connect();
+				out = conn.getOutputStream();
+				out.write(body.getBytes(UTF8));
+			} else {
+				conn.connect();
+				out = conn.getOutputStream();
+				writeValue(out, u);
+			}
+
+			in = conn.getInputStream();
+			if (log.isDebugEnabled()) {
+				String res = readString(in);
+				logResponse(conn, res);
+				return readValue(in, clazz);
+			} else {
+				return readValue(in, clazz);
+			}
 		} catch (IOException x) {
 			throw getError(x, conn);
 		} finally {
@@ -346,7 +383,7 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 				logRequest(conn, body);
 				conn.connect();
 				out = conn.getOutputStream();
-				out.write(body.getBytes(Charset.forName("UTF-8")));
+				out.write(body.getBytes(UTF8));
 			} else {
 				conn.connect();
 				out = conn.getOutputStream();
@@ -383,7 +420,7 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 				logRequest(conn, body);
 				conn.connect();
 				out = conn.getOutputStream();
-				out.write(body.getBytes(Charset.forName("UTF-8")));
+				out.write(body.getBytes(UTF8));
 			} else {
 				conn.connect();
 				out = conn.getOutputStream();

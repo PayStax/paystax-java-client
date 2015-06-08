@@ -58,6 +58,8 @@ public abstract class PayStaxPayment<T extends PayStaxPayment> implements Serial
 	@Setter(AccessLevel.NONE)
 	protected PayStaxAuditData auditData;
 
+	protected PayStaxPaymentAction action;
+
 	protected PayStaxPayment() {}
 
 	protected PayStaxPayment(RestClient restClient) {
@@ -100,6 +102,7 @@ public abstract class PayStaxPayment<T extends PayStaxPayment> implements Serial
 		} else { // Update payment
 			restClient.update("/payments/" + id, this);
 		}
+		this.action = null; // clear out the action if there was one
 		return (T)this;
 	}
 
