@@ -36,6 +36,7 @@ public class PayStaxCardPayment extends PayStaxPayment<PayStaxCardPayment> {
 
 	private static final long serialVersionUID = 7362484141307541297L;
 
+	@Setter(AccessLevel.NONE)
 	protected String cardType;
 	protected String accountNumber;
 	protected String securityCode;
@@ -47,8 +48,12 @@ public class PayStaxCardPayment extends PayStaxPayment<PayStaxCardPayment> {
 	@Setter(AccessLevel.NONE)
 	protected String lastFourDigits;
 
+	public PayStaxCardPayment setCardType(String cardType) {
+		this.cardType = cardType != null ? cardType.toUpperCase() : null;
+	}
+
 	public PayStaxCardPayment setCardType(PayStaxCardType cardType) {
-		this.cardType = cardType.toString();
+		this.cardType = cardType != null ? cardType.toString() : null;
 		return this;
 	}
 
