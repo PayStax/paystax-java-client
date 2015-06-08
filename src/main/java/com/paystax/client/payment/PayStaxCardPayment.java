@@ -50,6 +50,7 @@ public class PayStaxCardPayment extends PayStaxPayment<PayStaxCardPayment> {
 
 	public PayStaxCardPayment setCardType(String cardType) {
 		this.cardType = cardType != null ? cardType.toUpperCase() : null;
+		return this;
 	}
 
 	public PayStaxCardPayment setCardType(PayStaxCardType cardType) {
