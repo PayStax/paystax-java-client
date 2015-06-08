@@ -17,7 +17,6 @@ package com.paystax.client.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.paystax.client.CardType;
 import com.paystax.client.PayStaxAddress;
 import com.paystax.client.http.RestClient;
 import lombok.*;
@@ -37,7 +36,7 @@ public class PayStaxCardPayment extends PayStaxPayment<PayStaxCardPayment> {
 
 	private static final long serialVersionUID = 7362484141307541297L;
 
-	protected CardType cardType;
+	protected String cardType;
 	protected String accountNumber;
 	protected String securityCode;
 	private String expMonth;
@@ -47,6 +46,11 @@ public class PayStaxCardPayment extends PayStaxPayment<PayStaxCardPayment> {
 
 	@Setter(AccessLevel.NONE)
 	protected String lastFourDigits;
+
+	public PayStaxCardPayment setCardType(PayStaxCardType cardType) {
+		this.cardType = cardType.toString();
+		return this;
+	}
 
 	public PayStaxCardPayment(RestClient restClient) {
 		super(restClient);

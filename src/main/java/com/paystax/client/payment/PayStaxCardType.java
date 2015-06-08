@@ -16,6 +16,8 @@
 package com.paystax.client.payment;
 
 /**
+ * Holds card types.
+ *
  * @author Erik R. Jensen
  */
 public enum PayStaxCardType {
