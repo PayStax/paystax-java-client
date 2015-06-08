@@ -151,7 +151,7 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 				case 400:
 					if (error != null) {
 						return new PayStaxBadRequestException("Received error: " + error,
-								readValue(error, List.class, PayStaxError.class));
+								readCollection(error, List.class, PayStaxError.class));
 					}
 					throw new PayStaxBadRequestException();
 				case 403:

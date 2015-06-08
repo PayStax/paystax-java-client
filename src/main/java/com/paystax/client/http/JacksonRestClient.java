@@ -61,7 +61,7 @@ public abstract class JacksonRestClient implements RestClient {
 		return objectMapper.reader().with(injectableValues).withValueToUpdate(o).readValue(inputStream);
 	}
 
-	protected <C extends Collection<T>,T> C readValue(String value, Class<C> collectionClass, Class<T> typeClass)
+	protected <C extends Collection<T>,T> C readCollection(String value, Class<C> collectionClass, Class<T> typeClass)
 			throws IOException {
 		return objectMapper.reader().with(injectableValues).withType(
 				objectMapper.getTypeFactory().constructCollectionType(collectionClass, typeClass))
