@@ -18,6 +18,7 @@ package com.paystax.client;
 import com.paystax.client.http.QueryStringBuilder;
 import com.paystax.client.http.RestClient;
 import com.paystax.client.payment.PayStaxPayment;
+import com.paystax.client.payment.PayStaxPaymentType;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -42,6 +43,11 @@ public class PayStaxPaymentSearch extends PayStaxSearch<PayStaxPaymentSearch> im
 	protected PayStaxPaymentSearch(RestClient restClient) {
 		this.restClient = restClient;
 	}
+
+	private PayStaxPaymentType[] type;
+	private String merchantReferenceEquals;
+	private String merchantReferenceContains;
+	private String merchantReferenceStartsWith;
 
 	@SuppressWarnings("unchecked")
 	public PayStaxPage<PayStaxPayment> search() throws IOException {
