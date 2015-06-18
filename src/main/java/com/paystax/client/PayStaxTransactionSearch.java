@@ -17,8 +17,8 @@ package com.paystax.client;
 
 import com.paystax.client.http.QueryStringBuilder;
 import com.paystax.client.http.RestClient;
-import com.paystax.client.payment.PayStaxPayment;
-import com.paystax.client.payment.PayStaxPaymentType;
+import com.paystax.client.transaction.PayStaxTransaction;
+import com.paystax.client.transaction.PayStaxTransactionType;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -32,7 +32,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Accessors(chain = true)
-public class PayStaxPaymentSearch extends PayStaxSearch<PayStaxPaymentSearch> implements Serializable {
+public class PayStaxTransactionSearch extends PayStaxSearch<PayStaxTransactionSearch> implements Serializable {
 
 	private static final long serialVersionUID = -5233448519530177735L;
 
@@ -40,18 +40,18 @@ public class PayStaxPaymentSearch extends PayStaxSearch<PayStaxPaymentSearch> im
 	@Setter(AccessLevel.NONE)
 	protected RestClient restClient;
 
-	protected PayStaxPaymentSearch(RestClient restClient) {
+	protected PayStaxTransactionSearch(RestClient restClient) {
 		this.restClient = restClient;
 	}
 
-	private PayStaxPaymentType[] type;
+	private PayStaxTransactionType[] type;
 	private String merchantReferenceEquals;
 	private String merchantReferenceContains;
 	private String merchantReferenceStartsWith;
 
 	@SuppressWarnings("unchecked")
-	public PayStaxPage<PayStaxPayment> search() throws IOException {
+	public PayStaxPage<PayStaxTransaction> search() throws IOException {
 		String uri = "/payments?" + new QueryStringBuilder().add(this).toQueryString();
-		return restClient.get(uri, PayStaxPage.class, PayStaxPayment.class);
+		return restClient.get(uri, PayStaxPage.class, PayStaxTransaction.class);
 	}
 }

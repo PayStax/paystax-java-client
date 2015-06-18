@@ -16,10 +16,9 @@
 package com.paystax.client;
 
 import com.paystax.client.gateway.PayStaxGateway;
-import com.paystax.client.http.URLConnectionRestClient;
 import com.paystax.client.http.RestClient;
-import com.paystax.client.payment.PayStaxPayment;
-import com.paystax.client.payment.PayStaxPaymentAction;
+import com.paystax.client.http.URLConnectionRestClient;
+import com.paystax.client.transaction.PayStaxTransaction;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -136,8 +135,7 @@ public class PayStaxClient implements Serializable {
 		restClient.delete("/gateways/" + gatewayId);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends PayStaxPayment> T newPayment(Class<T> clazz) throws IOException {
+	public <T extends PayStaxTransaction> T newTransaction(Class<T> clazz) {
 		try {
 			return clazz.getConstructor(RestClient.class).newInstance(restClient);
 		} catch (IllegalAccessException x) {
@@ -151,23 +149,15 @@ public class PayStaxClient implements Serializable {
 		}
 	}
 
-	public <T extends PayStaxPayment> T getPayment(UUID paymentId, Class<T> clazz) throws IOException {
-		return restClient.get("/payments/" + paymentId , clazz);
+	public <T extends PayStaxTransaction> T getTransaction(UUID transactionId, Class<T> clazz) throws IOException {
+		return restClient.get("/transactions/" + transactionId, clazz);
 	}
 
-	public PayStaxPayment getPayment(UUID paymentId) throws IOException {
-		return restClient.get("/payments/" + paymentId, PayStaxPayment.class);
+	public PayStaxTransaction getTransaction(UUID transactionId) throws IOException {
+		return restClient.get("/transactions/" + transactionId, PayStaxTransaction.class);
 	}
 
-	public PayStaxPaymentSearch paymentSearch() {
-		return new PayStaxPaymentSearch(restClient);
-	}
-
-	public PayStaxPayment executePayment(final PayStaxPaymentAction action, UUID paymentId) throws IOException {
-		return restClient.patch("/payments/" + paymentId, PayStaxPayment.class, new Object() {
-			public PayStaxPaymentAction getAction() {
-				return action;
-			}
-		});
+	public PayStaxTransactionSearch transactionSearch() {
+		return new PayStaxTransactionSearch(restClient);
 	}
 }

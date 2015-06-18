@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  */
 public class TestUtil {
 
-	public static final String URL = "http://test.paystax.cc:8080";
+	public static final String URL = "https://test.paystax.cc:8080";
 	public static final String USERNAME = "test";
 	public static final String PASSWORD = "Password1!";
 

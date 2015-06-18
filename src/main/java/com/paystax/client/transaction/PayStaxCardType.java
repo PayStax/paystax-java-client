@@ -13,11 +13,18 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.paystax.client.payment;
+package com.paystax.client.transaction;
 
 /**
+ * Holds card types.
+ *
  * @author Erik R. Jensen
  */
-public enum PayStaxPaymentType {
-	CARD
+public enum PayStaxCardType {
+	VISA,
+	MASTERCARD,
+	AMEX,
+	JCB,
+	DISCOVER,
+	DINERSCLUB
 }
