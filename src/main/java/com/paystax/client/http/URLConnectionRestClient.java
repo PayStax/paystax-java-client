@@ -16,6 +16,7 @@
 package com.paystax.client.http;
 
 import com.paystax.client.PayStaxError;
+import com.paystax.client.Version;
 import com.paystax.client.exception.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,6 +39,7 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 
 	private static final long serialVersionUID = -5275552394410711694L;
 	private static final Charset UTF8 = Charset.forName("UTF-8");
+	public static final String USER_AGENT = "PayStax Java Client " + Version.VERSION;
 	protected String authorization;
 	protected String url;
 
@@ -178,7 +180,7 @@ public class URLConnectionRestClient extends JacksonRestClient implements Serial
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 		conn.setRequestProperty("Authorization", authorization);
 		conn.setRequestProperty("Accept", "application/vnd.paystax.v1+json"); // TODO Make constant
-		conn.setRequestProperty("User-Agent", "PayStax Java Client"); // TODO Add Version
+		conn.setRequestProperty("User-Agent", USER_AGENT);
 		conn.setRequestMethod(method.toString());
 		conn.setConnectTimeout(120 * 1000); // 2 minutes // TODO Make configurable
 		conn.setReadTimeout(120 * 1000); // 2 minutes // TODO Make configurable

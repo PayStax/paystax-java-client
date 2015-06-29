@@ -36,6 +36,7 @@
 		<!-- Plugin Versions -->
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 		<license-maven-plugin.version>2.6</license-maven-plugin.version>
+		<replacer-plugin.version>1.5.3</replacer-plugin.version>
 
 		<!-- Dependency Versions -->
 		<groovy.version>2.3.0</groovy.version>
@@ -109,6 +110,33 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+				<version>${replacer-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<file>src/main/java/com/paystax/client/Version.txt</file>
+					<outputFile>src/main/java/com/paystax/client/Version.java</outputFile>
+					<replacements>
+						<replacement>
+							<token>@buildtime@</token>
+							<value>${maven.build.timestamp}</value>
+						</replacement>
+						<replacement>
+							<token>@version@</token>
+							<value>${project.version}</value>
+						</replacement>
+					</replacements>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
@@ -132,6 +160,8 @@
 					<excludes>
 						<exclude>LICENSE.txt</exclude>
 						<exclude>NOTICE.txt</exclude>
+						<exclude>**/Version.java</exclude>
+						<exclude>**/Version.txt</exclude>
 					</excludes>
 				</configuration>
 				<executions>
