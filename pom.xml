@@ -23,9 +23,10 @@
 	<artifactId>paystax-client</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
 	<name>paystax-client</name>
-
+	<scm>
+		<connection>git@github.com:PayStax/paystax-java-client.git</connection>
+	</scm>
 	<properties>
 		<!-- Build Settings -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,8 +36,10 @@
 
 		<!-- Plugin Versions -->
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<maven-scm-plugin.version>1.9.4</maven-scm-plugin.version>
 		<license-maven-plugin.version>2.6</license-maven-plugin.version>
 		<replacer-plugin.version>1.5.3</replacer-plugin.version>
+		<versions-maven-plugin.version>2.2</versions-maven-plugin.version>
 
 		<!-- Dependency Versions -->
 		<groovy.version>2.3.0</groovy.version>
@@ -137,17 +140,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-					<optimize>${compiler.optimize}</optimize>
-					<debug>${compiler.debug}</debug>
-				</configuration>
-			</plugin>
-			<plugin>
 				<inherited>false</inherited>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
@@ -173,6 +165,31 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<optimize>${compiler.optimize}</optimize>
+					<debug>${compiler.debug}</debug>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+				<version>${maven-scm-plugin.version}</version>
+				<configuration>
+					<connectionType>connection</connectionType>
+					<tag>${project.artifactId}-${project.version}</tag>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>${versions-maven-plugin.version}</version>
 			</plugin>
 		</plugins>
 	</build>
