@@ -15,6 +15,7 @@
  */
 package com.paystax.client;
 
+import com.paystax.client.exception.LinkParseException;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.*;
@@ -57,17 +58,17 @@ public class LinkBuilderTest {
 		assertTrue(lb.getQueryParameters().contains("action2"));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = LinkParseException.class)
 	public void testBadParse1() {
 		new LinkBuilder("http://example.com/collection/id}{?action1,action2");
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = LinkParseException.class)
 	public void testBadParse2() {
 		new LinkBuilder("http://example.com/collection/{id{?action1,action2");
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test(expected = LinkParseException.class)
 	public void testParseEmptyPathVariable() {
 		new LinkBuilder("http://example.com/collection/{}");
 	}
