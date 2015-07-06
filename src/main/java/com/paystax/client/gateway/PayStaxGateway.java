@@ -32,6 +32,7 @@ import java.util.UUID;
 @ToString(exclude = {"restClient"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSubTypes({
+		@JsonSubTypes.Type(value = PayStaxFakeGateway.class, name = "FAKE"),
 		@JsonSubTypes.Type(value = PayStaxPayvisionGateway.class, name = "PAYVISION")})
 @JsonTypeInfo(
 		use = JsonTypeInfo.Id.NAME,
