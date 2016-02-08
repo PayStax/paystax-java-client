@@ -24,6 +24,10 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 /**
  * @author Erik R. Jensen
  */
@@ -33,18 +37,21 @@ import lombok.experimental.Accessors;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeName("PAYVISION")
-public class PayStaxPayvisionGateway extends PayStaxGateway<PayStaxPayvisionGateway> {
+@JsonTypeName("COUNTRY_ROUTING")
+public class PayStaxCountryRoutingGateway extends PayStaxGateway<PayStaxCountryRoutingGateway> {
 
-	private static final long serialVersionUID = 339363027799799274L;
+	private static final long serialVersionUID = -8295233532825497844L;
 
-	protected String url;
-	protected String queryUrl;
-	protected String username;
-	protected String password;
+	protected UUID defaultGateway;
+	protected Map<String, UUID> routes = new HashMap<String, UUID>();
 
-	public PayStaxPayvisionGateway(RestClient restClient) {
+	public PayStaxCountryRoutingGateway(RestClient restClient) {
 		super(restClient);
-		this.type = PayStaxGatewayType.PAYVISION;
+		this.type = PayStaxGatewayType.COUNTRY_ROUTING;
+	}
+
+	public PayStaxCountryRoutingGateway addRoute(String country, UUID gatewayId) {
+		routes.put(country, gatewayId);
+		return this;
 	}
 }

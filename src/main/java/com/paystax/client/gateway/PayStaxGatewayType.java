@@ -21,7 +21,8 @@ package com.paystax.client.gateway;
 public enum PayStaxGatewayType {
 
 	FAKE(PayStaxFakeGateway.class),
-	PAYVISION(PayStaxPayvisionGateway.class);
+	PAYVISION(PayStaxPayvisionGateway.class),
+	COUNTRY_ROUTING(PayStaxCountryRoutingGateway.class);
 
 	private Class<? extends PayStaxGateway> clazz;
 
