@@ -18,6 +18,7 @@ package com.paystax.client;
 import com.paystax.client.gateway.PayStaxGateway;
 import com.paystax.client.http.RestClient;
 import com.paystax.client.http.URLConnectionRestClient;
+import com.paystax.client.paymentmethod.PayStaxPaymentMethod;
 import com.paystax.client.transaction.PayStaxTransaction;
 
 import java.io.IOException;
@@ -108,13 +109,7 @@ public class PayStaxClient implements Serializable {
 	public <T extends PayStaxGateway> T newGateway(Class<T> clazz) throws IOException {
 		try {
 			return clazz.getConstructor(RestClient.class).newInstance(restClient);
-		} catch (IllegalAccessException x) {
-			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
-		} catch (InstantiationException x) {
-			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
-		} catch (NoSuchMethodException x) {
-			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
-		} catch (InvocationTargetException x) {
+		} catch (IllegalAccessException | InstantiationException | IllegalStateException | NoSuchMethodException | InvocationTargetException x) {
 			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
 		}
 	}
@@ -135,16 +130,10 @@ public class PayStaxClient implements Serializable {
 		restClient.delete("/gateways/" + gatewayId);
 	}
 
-	public <T extends PayStaxTransaction> T newTransaction(Class<T> clazz) {
+	public <T extends PayStaxTransaction> T newTransaction(final Class<T> clazz) {
 		try {
 			return clazz.getConstructor(RestClient.class).newInstance(restClient);
-		} catch (IllegalAccessException x) {
-			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
-		} catch (InstantiationException x) {
-			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
-		} catch (NoSuchMethodException x) {
-			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
-		} catch (InvocationTargetException x) {
+		} catch (IllegalAccessException | InstantiationException | IllegalStateException | NoSuchMethodException | InvocationTargetException x) {
 			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
 		}
 	}
@@ -159,5 +148,13 @@ public class PayStaxClient implements Serializable {
 
 	public PayStaxTransactionSearch transactionSearch() {
 		return new PayStaxTransactionSearch(restClient);
+	}
+
+	public <T extends PayStaxPaymentMethod> T newPaymentMethod(final Class<T> clazz) {
+		try {
+			return clazz.getConstructor(RestClient.class).newInstance(restClient);
+		} catch (IllegalAccessException | InstantiationException | IllegalStateException | NoSuchMethodException | InvocationTargetException x) {
+			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
+		}
 	}
 }

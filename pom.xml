@@ -30,7 +30,7 @@
 	<properties>
 		<!-- Build Settings -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.6</java.version>
+		<java.version>1.8</java.version>
 		<compiler.optimize>false</compiler.optimize>
 		<compiler.debug>true</compiler.debug>
 
@@ -96,6 +96,18 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.netradius.commons</groupId>
+			<artifactId>java-commons</artifactId>
+			<version>0.0.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.paystax</groupId>
+			<artifactId>cryptolib</artifactId>
+			<version>1.2.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<distributionManagement>

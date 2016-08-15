@@ -68,7 +68,7 @@ public abstract class JacksonRestClient implements RestClient {
 				.readValue(value);
 	}
 
-	protected <C, P> C readValue(String value, Class<C> clazz, Class<P> parameterClass) throws IOException {
+	public <C, P> C readValue(String value, Class<C> clazz, Class<P> parameterClass) throws IOException {
 		JavaType type = objectMapper.getTypeFactory().constructParametricType(clazz, parameterClass);
 		return objectMapper.reader().with(injectableValues).withType(type).readValue(value);
 	}
