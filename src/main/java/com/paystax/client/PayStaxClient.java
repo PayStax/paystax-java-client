@@ -157,4 +157,20 @@ public class PayStaxClient implements Serializable {
 			throw new IllegalStateException("Unable to create new instance of " + clazz.getCanonicalName());
 		}
 	}
+
+	public <T extends PayStaxPaymentMethod> T getPaymentMethod(UUID paymentMethodId, Class<T> clazz) throws IOException {
+		return restClient.get("/payment_methods/" + paymentMethodId, clazz);
+	}
+
+	public PayStaxPaymentMethod getPaymentMethod(UUID paymentMethodId) throws IOException {
+		return restClient.get("/payment_methods/" + paymentMethodId, PayStaxPaymentMethod.class);
+	}
+
+	public PayStaxPaymentMethodSearch paymentMethodSearch() {
+		return new PayStaxPaymentMethodSearch(restClient);
+	}
+
+	public void deletePaymentMethod(UUID paymentMethodId) throws IOException {
+		restClient.delete("/payment_methods/" + paymentMethodId);
+	}
 }

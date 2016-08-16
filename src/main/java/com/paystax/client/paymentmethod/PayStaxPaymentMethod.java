@@ -31,7 +31,7 @@ import java.util.UUID;
  * @author Erik R. Jensen
  */
 @Data
-@EqualsAndHashCode(exclude = {"restClient"})
+@EqualsAndHashCode(exclude = {"restClient"}, callSuper = false)
 @ToString(exclude = {"restClient"})
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -79,6 +79,11 @@ public abstract class PayStaxPaymentMethod<T> extends LinkedResourceAdapter impl
 			restClient.update("/payment_methods/" + id, this);
 		}
 		return (T)this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public T refresh() throws IOException {
+		return restClient.get("/payment_methods/" + id, (T)this);
 	}
 
 }
