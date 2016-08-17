@@ -166,6 +166,8 @@
 						<exclude>NOTICE.txt</exclude>
 						<exclude>**/Version.java</exclude>
 						<exclude>**/Version.txt</exclude>
+						<exclude>integration.properties</exclude>
+						<exclude>integration-sample.properties</exclude>
 					</excludes>
 				</configuration>
 				<executions>
