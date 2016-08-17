@@ -55,6 +55,19 @@ public class PayerIT {
 		assertThat(payer.getFullName(), equalTo("James T Kirk"));
 		assertThat(payer.getMerchantReference(), equalTo("12345"));
 
+		profiler.start("Search Payer");
+		PayStaxPage<PayStaxPayer> page = client.payerSearch()
+				.addPayerId(payer.getId())
+				.search();
+		profiler.stop();
+		assertThat(page.getPage().getCount(), equalTo(1L));
+		payer = page.getContent().get(0);
+		assertThat(payer.getFirstName(), equalTo("Jim"));
+		assertThat(payer.getLastName(), equalTo("Kirk"));
+		assertThat(payer.getEmailAddress(), equalTo("captain@enterprise.com"));
+		assertThat(payer.getFullName(), equalTo("James T Kirk"));
+		assertThat(payer.getMerchantReference(), equalTo("12345"));
+
 		profiler.start("Delete Payer");
 		client.deletePayer(payer.getId());
 	}

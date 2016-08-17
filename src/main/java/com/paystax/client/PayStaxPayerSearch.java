@@ -22,6 +22,10 @@ import lombok.experimental.Accessors;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Erik R. Jensen
@@ -42,6 +46,7 @@ public class PayStaxPayerSearch extends PayStaxSearch<PayStaxPayerSearch> implem
 		this.restClient = restClient;
 	}
 
+	protected List<UUID> payerId;
 	protected String merchantReferenceEquals;
 	protected String merchantReferenceContains;
 	protected String merchantReferenceStartsWith;
@@ -57,6 +62,14 @@ public class PayStaxPayerSearch extends PayStaxSearch<PayStaxPayerSearch> implem
 	protected String emailAddressEquals;
 	protected String emailAddressContains;
 	protected String emailAddressStartsWith;
+
+	public PayStaxPayerSearch addPayerId(UUID ... ids) {
+		if (payerId == null) {
+			payerId = new ArrayList<>(ids.length);
+		}
+		payerId.addAll(Arrays.asList(ids));
+		return this;
+	}
 
 	@SuppressWarnings("unchecked")
 	public PayStaxPage<PayStaxPayer> search() throws IOException {
