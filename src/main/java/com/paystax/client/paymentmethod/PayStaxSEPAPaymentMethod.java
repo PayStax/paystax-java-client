@@ -22,6 +22,7 @@ import com.paystax.client.http.RestClient;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -49,6 +50,8 @@ public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPa
 	private String bic;
 	private String iban;
 	private String mandateId;
+	private String mandateUrl;
+	private long mandateSize;
 	private PayStaxSEPAMandateContentType mandateType;
 	@Getter(AccessLevel.NONE)
 	private byte[] mandate;
@@ -62,8 +65,12 @@ public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPa
 	}
 
 	public byte[] getMandate() {
-		String mandateUrl = getLinks().get("mandate");
 		if (mandateUrl != null) {
+			try {
+				restClient.get(mandateUrl, (new byte[]{}).getClass());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			// TODO Fetch the mandate bytes from the URL
 		}
 		return null;
