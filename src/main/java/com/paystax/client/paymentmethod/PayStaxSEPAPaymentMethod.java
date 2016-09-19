@@ -17,11 +17,9 @@ package com.paystax.client.paymentmethod;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.paystax.client.LinkedResource;
 import com.paystax.client.http.RestClient;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -37,7 +35,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeName("SEPA")
-public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPaymentMethod> {
+public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPaymentMethod> implements LinkedResource {
 
 	private static final long serialVersionUID = 8683929547504544700L;
 
@@ -51,9 +49,10 @@ public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPa
 	private String bic;
 	private String iban;
 	private String mandateId;
-	private Date signatureDate;
 	private PayStaxSEPAMandateContentType mandateType;
 	private byte[] mandate;
+	private Date signatureDate;
+	private PayStaxSEPAMandateContentType mandateContentType;
 	private String creditorId;
 
 	public PayStaxSEPAPaymentMethod setPayerId(UUID payerId) {

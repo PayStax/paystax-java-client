@@ -35,13 +35,13 @@ public class PayerIT {
 	private static Profiler profiler;
 
 	@BeforeClass
-	public static void init() throws IOException {
+	public static void beforeClass() throws IOException {
 		client = IntegrationTestHelper.getClient();
 		profiler = new Profiler("Payer Integration Tests");
 	}
 
 	@AfterClass
-	public static void cleanup() {
+	public static void afterClass() {
 		profiler.stop().print();
 	}
 
@@ -85,5 +85,6 @@ public class PayerIT {
 
 		profiler.start("Delete Payer");
 		client.deletePayer(payer.getId());
+		profiler.stop();
 	}
 }

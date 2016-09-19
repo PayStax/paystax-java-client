@@ -24,6 +24,9 @@ import lombok.experimental.Accessors;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -46,7 +49,24 @@ public class PayStaxPaymentMethodSearch extends PayStaxSearch<PayStaxPaymentMeth
 	}
 
 	private PayStaxPaymentMethodType[] type;
-	private UUID payerId;
+	private List<UUID> payerId;
+	private List<UUID> paymentMethodId;
+
+	public PayStaxPaymentMethodSearch addPayerId(UUID ... ids) {
+		if (payerId == null) {
+			payerId = new ArrayList<>(ids.length);
+		}
+		payerId.addAll(Arrays.asList(ids));
+		return this;
+	}
+
+	public PayStaxPaymentMethodSearch addPaymentMethodId(UUID ... ids) {
+		if (paymentMethodId == null) {
+			paymentMethodId = new ArrayList<>(ids.length);
+		}
+		paymentMethodId.addAll(Arrays.asList(ids));
+		return this;
+	}
 
 	@SuppressWarnings("unchecked")
 	public PayStaxPage<PayStaxPaymentMethod> search() throws IOException {
