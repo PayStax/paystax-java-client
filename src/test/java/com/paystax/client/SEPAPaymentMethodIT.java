@@ -126,8 +126,7 @@ public class SEPAPaymentMethodIT {
 		assertThat(paymentMethod.getPayerId(), equalTo(payer.getId()));
 		assertThat(paymentMethod.getCreditorId(), equalTo("DE98ZZZ09999999999"));
 		assertThat(paymentMethod.getMandateId(), notNullValue());
-		String url = paymentMethod.getLinks().get("mandate");
-		assertThat(url, notNullValue());
+		assertThat(paymentMethod.getMandateUrl(), notNullValue());
 		assertThat(paymentMethod.getMandateContentType(), equalTo(PayStaxSEPAMandateContentType.HTML));
 
 		profiler.start("Delete SEPA Payment Method");
