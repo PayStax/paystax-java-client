@@ -31,8 +31,8 @@ import java.util.UUID;
  */
 @Data
 @Accessors(chain = true)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"mandate"})
+@ToString(callSuper = true, exclude = {"mandate"})
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeName("SEPA")
@@ -64,16 +64,11 @@ public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPa
 		return this;
 	}
 
-	public byte[] getMandate() {
-		if (mandateUrl != null) {
-			try {
-				restClient.get(mandateUrl, (new byte[]{}).getClass());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			// TODO Fetch the mandate bytes from the URL
+	public byte[] getMandate() throws IOException {
+		if (mandate == null && mandateUrl != null) {
+			mandate = restClient.get(mandateUrl, (new byte[]{}).getClass());
 		}
-		return null;
+		return mandate;
 	}
 
 }
