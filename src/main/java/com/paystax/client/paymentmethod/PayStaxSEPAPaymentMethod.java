@@ -50,6 +50,7 @@ public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPa
 	private String iban;
 	private String mandateId;
 	private PayStaxSEPAMandateContentType mandateType;
+	@Getter(AccessLevel.NONE)
 	private byte[] mandate;
 	private Date signatureDate;
 	private PayStaxSEPAMandateContentType mandateContentType;
@@ -58,6 +59,14 @@ public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPa
 	public PayStaxSEPAPaymentMethod setPayerId(UUID payerId) {
 		this.payerId = payerId;
 		return this;
+	}
+
+	public byte[] getMandate() {
+		String mandateUrl = getLinks().get("mandate");
+		if (mandateUrl != null) {
+			// TODO Fetch the mandate bytes from the URL
+		}
+		return null;
 	}
 
 }
