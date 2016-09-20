@@ -18,20 +18,7 @@ package com.paystax.client.gateway;
 /**
  * @author Erik R. Jensen
  */
-public enum PayStaxGatewayType {
-
-	FAKE(PayStaxFakeGateway.class),
-	PAYVISION(PayStaxPayvisionGateway.class),
-	AUTHNET(PayStaxAuthorizeNetGateway.class),
-	COUNTRY_ROUTING(PayStaxCountryRoutingGateway.class);
-
-	private Class<? extends PayStaxGateway> clazz;
-
-	PayStaxGatewayType(Class<? extends PayStaxGateway> clazz) {
-		this.clazz = clazz;
-	}
-
-	public Class<? extends PayStaxGateway> getClazz() {
-		return clazz;
-	}
+public enum AuthorizeNetEnvironment {
+	PRODUCTION,
+	SANDBOX
 }

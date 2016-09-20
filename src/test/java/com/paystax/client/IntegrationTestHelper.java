@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -143,6 +144,13 @@ public class IntegrationTestHelper {
 	public static PayStaxPayer getPayer() throws IOException {
 		init();
 		return payer;
+	}
+
+	public static Properties getConfig() throws IOException {
+		if (config == null) {
+			loadConfig();
+		}
+		return config;
 	}
 
 }
