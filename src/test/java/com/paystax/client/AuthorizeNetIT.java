@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.slf4j.profiler.Profiler;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -42,6 +43,7 @@ import static org.junit.Assert.*;
 public class AuthorizeNetIT {
 
 	private static PayStaxClient client;
+	private static Profiler profiler;
 	private static String loginId;
 	private static String transactionKey;
 	private static AuthorizeNetEnvironment environment;
@@ -83,20 +85,20 @@ public class AuthorizeNetIT {
 	}
 
 	private PayStaxAuthorizeNetGateway getGateway() throws IOException {
-		PayStaxAuthorizeNetGateway gateway = client.newGateway(PayStaxAuthorizeNetGateway.class);
-		gateway.setEnvironment(environment)
+		return client.newGateway(PayStaxAuthorizeNetGateway.class)
+				.setEnvironment(environment)
 				.setLoginId(loginId)
 				.setTransactionKey(transactionKey)
 				.setName("AUTHNET-" + System.currentTimeMillis())
 				.save();
-		return gateway;
 	}
 
 	@Test
 	@ConditionalIgnoreRule.ConditionalIgnore(condition = AuthorizeNetIT.AuthorizeNetEnabled.class)
 	public void testAuth() throws IOException {
-		log.info("Testing Authorize.Net Auth Transaction");
+		profiler.start("New Authorize.Net Gateway");
 		PayStaxAuthorizeNetGateway gateway = getGateway();
+		profiler.start("New Authorize.Net Transaction");
 		PayStaxCardAuth tx = client.newTransaction(PayStaxCardAuth.class)
 				.setMerchantReference(UUID.randomUUID().toString())
 				.setGatewayId(gateway.getId())
@@ -106,10 +108,10 @@ public class AuthorizeNetIT {
 				.setExpMonth("08")
 				.setExpYear(getExpirationYear())
 				.save();
+		profiler.stop();
 
 		assertTrue(tx.isSuccess());
-
-		log.info("Save transaction: " + tx.toString());
+		log.info("Saved transaction: " + tx.toString());
 	}
 
 }

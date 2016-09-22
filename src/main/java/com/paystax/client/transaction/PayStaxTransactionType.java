@@ -25,5 +25,6 @@ public enum PayStaxTransactionType {
 	CARD_VOID,
 	CARD_REFUND,
 	CARD_CREDIT,
+	SEPA,
 	ACH
 }

@@ -23,7 +23,8 @@ public enum PayStaxGatewayType {
 	FAKE(PayStaxFakeGateway.class),
 	PAYVISION(PayStaxPayvisionGateway.class),
 	AUTHNET(PayStaxAuthorizeNetGateway.class),
-	COUNTRY_ROUTING(PayStaxCountryRoutingGateway.class);
+	COUNTRY_ROUTING(PayStaxCountryRoutingGateway.class),
+	WIRECARD(PayStaxWirecardGateway.class);
 
 	private Class<? extends PayStaxGateway> clazz;
 
