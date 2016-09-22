@@ -3,3 +3,5 @@
 target
 **/Version.java
 integration.properties
+*.swp
+*.swo
