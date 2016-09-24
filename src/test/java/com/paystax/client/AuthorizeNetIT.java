@@ -19,6 +19,7 @@ import com.paystax.client.gateway.AuthorizeNetEnvironment;
 import com.paystax.client.gateway.PayStaxAuthorizeNetGateway;
 import com.paystax.client.junit.ConditionalIgnoreRule;
 import com.paystax.client.transaction.PayStaxCardAuth;
+import com.paystax.client.transaction.PayStaxCardAuthCapture;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -54,6 +55,7 @@ public class AuthorizeNetIT {
 	@BeforeClass
 	public static void init() throws IOException {
 		client = IntegrationTestHelper.getClient();
+		profiler = new Profiler("Authorize.Net Integration Tests");
 		Properties props = IntegrationTestHelper.getConfig();
 		loginId = props.getProperty("authnet.loginid");
 		transactionKey = props.getProperty("authnet.transkey");
@@ -98,7 +100,7 @@ public class AuthorizeNetIT {
 	public void testAuth() throws IOException {
 		profiler.start("New Authorize.Net Gateway");
 		PayStaxAuthorizeNetGateway gateway = getGateway();
-		profiler.start("New Authorize.Net Transaction");
+		profiler.start("New Authorize.Net Auth Transaction");
 		PayStaxCardAuth tx = client.newTransaction(PayStaxCardAuth.class)
 				.setMerchantReference(UUID.randomUUID().toString())
 				.setGatewayId(gateway.getId())
@@ -112,6 +114,26 @@ public class AuthorizeNetIT {
 
 		assertTrue(tx.isSuccess());
 		log.info("Saved transaction: " + tx.toString());
+	}
+
+	@Test
+	@ConditionalIgnoreRule.ConditionalIgnore(condition = AuthorizeNetIT.AuthorizeNetEnabled.class)
+	public void testAuthCapture() throws IOException {
+		profiler.start("New Authorize.Net Gateway");
+		PayStaxAuthorizeNetGateway gateway = getGateway();
+		profiler.start("New Authorize.Net Auth Capture Transaction");
+		PayStaxCardAuthCapture tx = client.newTransaction(PayStaxCardAuthCapture.class)
+				.setMerchantReference(UUID.randomUUID().toString())
+				.setGatewayId(gateway.getId())
+				.setAmount(getAmount())
+				.setCurrency("USD")
+				.setAccountNumber("4242424242424242")
+				.setExpMonth("08")
+				.setExpYear(getExpirationYear())
+				.save();
+		profiler.stop();
+		assertTrue(tx.isSuccess());
+		log.info("Save transaction: " + tx.toString());
 	}
 
 }
