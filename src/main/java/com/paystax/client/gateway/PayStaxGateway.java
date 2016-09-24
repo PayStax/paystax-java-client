@@ -33,7 +33,10 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSubTypes({
 		@JsonSubTypes.Type(value = PayStaxFakeGateway.class, name = "FAKE"),
-		@JsonSubTypes.Type(value = PayStaxPayvisionGateway.class, name = "PAYVISION")})
+		@JsonSubTypes.Type(value = PayStaxPayvisionGateway.class, name = "PAYVISION"),
+		@JsonSubTypes.Type(value = PayStaxAuthorizeNetGateway.class, name = "AUTHNET"),
+		@JsonSubTypes.Type(value = PayStaxCountryRoutingGateway.class, name = "COUNTRY_ROUTING"),
+		@JsonSubTypes.Type(value = PayStaxWirecardGateway.class, name = "WIRECARD")})
 @JsonTypeInfo(
 		use = JsonTypeInfo.Id.NAME,
 		include = JsonTypeInfo.As.PROPERTY,

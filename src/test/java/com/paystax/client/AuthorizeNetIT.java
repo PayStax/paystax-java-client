@@ -17,6 +17,7 @@ package com.paystax.client;
 
 import com.paystax.client.gateway.AuthorizeNetEnvironment;
 import com.paystax.client.gateway.PayStaxAuthorizeNetGateway;
+import com.paystax.client.gateway.PayStaxGateway;
 import com.paystax.client.junit.ConditionalIgnoreRule;
 import com.paystax.client.transaction.PayStaxCardAuth;
 import com.paystax.client.transaction.PayStaxCardAuthCapture;
@@ -93,6 +94,18 @@ public class AuthorizeNetIT {
 				.setTransactionKey(transactionKey)
 				.setName("AUTHNET-" + System.currentTimeMillis())
 				.save();
+	}
+
+	@Test
+	@ConditionalIgnoreRule.ConditionalIgnore(condition = AuthorizeNetIT.AuthorizeNetEnabled.class)
+	public void testGetGateways() throws IOException {
+		profiler.start("New Authorize.Net Gateway");
+		PayStaxAuthorizeNetGateway gateway = getGateway();
+		profiler.start("List Gateways");
+		PayStaxPage<PayStaxGateway> gateways = client.gatewaySearch()
+				.setNameEquals(gateway.getName())
+				.search();
+		assertThat(gateways.getPage().getCount(), equalTo(1l));
 	}
 
 	@Test
