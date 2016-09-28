@@ -79,18 +79,23 @@ public class SEPAPaymentMethodIT {
 				.setMandateType(PayStaxSEPAMandateContentType.HTML)
 				.setMandate("<html><body>test</body></html>".getBytes(StandardCharsets.UTF_8))
 				.setCreditorId("DE98ZZZ09999999999")
+				.setBankName("International Bank Of Awesome")
 				.save();
 
 		profiler.start("Update SEPA Payment Method");
 		paymentMethod.setFirstName("Jim")
 				.save();
 
-		profiler.start("Get SEPA Payment Method (with Class)");
-//		PayStaxPage<PayStaxSEPAPaymentMethod> search = client.paymentMethodSearch(PayStaxSEPAPaymentMethod.class).search();
-//		search.getContent();
+		profiler.start("Search SEPA Payment Method");
+		PayStaxPage<PayStaxPaymentMethod> results = client.paymentMethodSearch().search();
+		profiler.stop();
+		assertThat(results.getPage().getCount(), equalTo(1l));
+		assertThat(results.getContent().get(0).getId(), equalTo(paymentMethod.getId()));
 
+		profiler.start("Get SEPA Payment Method");
 		paymentMethod = client.getPaymentMethod(paymentMethod.getId(), PayStaxSEPAPaymentMethod.class);
 		profiler.stop();
+		assertThat(paymentMethod.getBankName(), equalTo("International Bank Of Awesome"));
 
 		assertThat(paymentMethod.getType(), equalTo(PayStaxPaymentMethodType.SEPA));
 		assertThat(paymentMethod.getFirstName(), equalTo("Jim"));

@@ -58,6 +58,7 @@ public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPa
 	private Date signatureDate;
 	private PayStaxSEPAMandateContentType mandateContentType;
 	private String creditorId;
+	private String bankName;
 
 	public PayStaxSEPAPaymentMethod setPayerId(UUID payerId) {
 		this.payerId = payerId;
