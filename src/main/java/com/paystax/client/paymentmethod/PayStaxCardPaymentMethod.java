@@ -17,7 +17,9 @@ package com.paystax.client.paymentmethod;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.paystax.client.PayStaxAddress;
 import com.paystax.client.http.RestClient;
+import com.paystax.client.transaction.PayStaxCardType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -40,15 +42,21 @@ public class PayStaxCardPaymentMethod extends PayStaxPaymentMethod<PayStaxCardPa
 
 	private static final long serialVersionUID = 762238899874041185L;
 
+	protected PayStaxCardType cardType;
+	protected String accountNumber;
+	protected String expMonth;
+	protected String expYear;
+	protected String cardholderName;
+	protected PayStaxAddress address;
+
 	public PayStaxCardPaymentMethod(RestClient restClient) {
 		super(restClient);
 		this.type = PayStaxPaymentMethodType.CARD;
 	}
 
-	// TODO Needs to be implemented!
-
 	public PayStaxCardPaymentMethod setPayerId(UUID payerId) {
 		this.payerId = payerId;
 		return this;
 	}
+
 }

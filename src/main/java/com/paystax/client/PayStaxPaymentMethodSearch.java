@@ -17,6 +17,7 @@ package com.paystax.client;
 
 import com.paystax.client.http.QueryStringBuilder;
 import com.paystax.client.http.RestClient;
+import com.paystax.client.paymentmethod.PayStaxPaymentMethod;
 import com.paystax.client.paymentmethod.PayStaxPaymentMethodType;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -35,21 +36,19 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Accessors(chain = true)
-public class PayStaxPaymentMethodSearch<T> extends PayStaxSearch<T> implements Serializable {
+public class PayStaxPaymentMethodSearch extends PayStaxSearch<PayStaxPaymentMethod> implements Serializable {
 
 	private static final long serialVersionUID = 3886823293069222591L;
 
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	protected RestClient restClient;
-	private Class<T> clazz;
 
-	protected PayStaxPaymentMethodSearch(RestClient restClient,Class<T> clazz) {
+	protected PayStaxPaymentMethodSearch(RestClient restClient) {
 		this.restClient = restClient;
-		this.clazz = clazz;
 	}
 
-	private PayStaxPaymentMethodType[] type;
+	private List<PayStaxPaymentMethodType> type;
 	private List<UUID> payerId;
 	private List<UUID> paymentMethodId;
 
@@ -69,9 +68,19 @@ public class PayStaxPaymentMethodSearch<T> extends PayStaxSearch<T> implements S
 		return this;
 	}
 
+	public PayStaxPaymentMethodSearch addType(PayStaxPaymentMethodType t) {
+		if (type == null) {
+			type = new ArrayList<>();
+		}
+		if (!type.contains(t)) {
+			type.add(t);
+		}
+		return this;
+	}
+
 	@SuppressWarnings("unchecked")
-	public PayStaxPage<T> search() throws IOException {
+	public PayStaxPage<PayStaxPaymentMethod> search() throws IOException {
 		String uri = "/payment_methods?" + new QueryStringBuilder().add(this).toQueryString();
-		return restClient.get(uri, PayStaxPage.class, clazz);
+		return restClient.get(uri, PayStaxPage.class, PayStaxPaymentMethod.class);
 	}
 }

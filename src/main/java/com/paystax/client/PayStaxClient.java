@@ -166,8 +166,8 @@ public class PayStaxClient implements Serializable {
 		return restClient.get("/payment_methods/" + paymentMethodId, PayStaxPaymentMethod.class);
 	}
 
-	public PayStaxPaymentMethodSearch  paymentMethodSearch(Class clazz) {
-		return new PayStaxPaymentMethodSearch(restClient, clazz);
+	public PayStaxPaymentMethodSearch paymentMethodSearch() {
+		return new PayStaxPaymentMethodSearch(restClient);
 	}
 
 	public void deletePaymentMethod(UUID paymentMethodId) throws IOException {
