@@ -16,6 +16,7 @@
 package com.paystax.client;
 
 import com.netradius.commons.lang.ValidationHelper;
+import com.paystax.client.gateway.PayStaxFakeGateway;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -33,7 +34,7 @@ public class IntegrationTestHelper {
 
 	private static Properties config;
 	private static PayStaxClient client;
-	private static PayStaxPayer payer;
+	private static PayStaxFakeGateway fakeGateway;
 
 	private static Properties read(final File file) {
 		log.info("Loading integration test settings from " + file.getAbsolutePath());
@@ -141,9 +142,14 @@ public class IntegrationTestHelper {
 		return client;
 	}
 
-	public static PayStaxPayer getPayer() throws IOException {
+	public static PayStaxFakeGateway getFakeGateway() throws IOException {
 		init();
-		return payer;
+		if (fakeGateway == null) {
+			fakeGateway = client.newGateway(PayStaxFakeGateway.class)
+					.setName("Integration Test Fake Gateway")
+					.save();
+		}
+		return fakeGateway;
 	}
 
 	public static Properties getConfig() throws IOException {
