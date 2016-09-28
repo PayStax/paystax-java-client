@@ -41,7 +41,7 @@ public class CountryRoutingGatewayIT {
 		profiler.start("Search Gateways");
 		PayStaxPage<PayStaxGateway> gateways = client.gatewaySearch().setNameEquals("Integration TestCountry Routing Gateway")
 				.search();
-		assertThat(gateways.getPage().getCount(), equalTo(1));
+		assertThat(gateways.getPage().getCount(), equalTo(1l));
 		PayStaxCountryRoutingGateway foundGateway = (PayStaxCountryRoutingGateway)gateways.getContent().get(0);
 		assertThat(foundGateway.getId(), equalTo(foundGateway.getId()));
 	}
