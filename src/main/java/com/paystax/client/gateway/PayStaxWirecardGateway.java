@@ -36,6 +36,9 @@ import lombok.experimental.Accessors;
 @JsonTypeName("WIRECARD")
 public class PayStaxWirecardGateway extends PayStaxGateway<PayStaxWirecardGateway> {
 
+	public static final String TESTING_URL = "https://api-test.wirecard.com/engine/rest/paymentmethods/";
+	public static final String PRODUCTION_URL = "https://api.wirecard.com/engine/rest/paymentmethods/";
+
 	private static final long serialVersionUID = -1541330244104330932L;
 
 	protected String url;
