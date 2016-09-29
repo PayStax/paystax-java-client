@@ -15,6 +15,7 @@
  */
 package com.paystax.client;
 
+import com.paystax.client.exception.PayStaxBadRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.*;
 import org.slf4j.profiler.Profiler;
@@ -43,6 +44,25 @@ public class PayerIT {
 	@AfterClass
 	public static void afterClass() {
 		profiler.stop().print();
+	}
+
+	@Test(expected = PayStaxBadRequestException.class)
+	public void testDuplicateMerchantReference() throws IOException {
+		PayStaxPayer payer = client.newPayer()
+				.setFirstName("James")
+				.setLastName("Kirk")
+				.setEmailAddress("captain@enterprise.com")
+				.setFullName("James T Kirk")
+				.setMerchantReference("123456")
+				.save();
+
+		payer = client.newPayer()
+				.setFirstName("James")
+				.setLastName("Kirk")
+				.setEmailAddress("captain@enterprise.com")
+				.setFullName("James T Kirk")
+				.setMerchantReference("123456")
+				.save();
 	}
 
 	@Test
