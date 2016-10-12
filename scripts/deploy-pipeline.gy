@@ -1,4 +1,4 @@
-node {
+node("paystax") {
 	def mvnHome = tool 'M3'
 	stage('Preparation') {
 		git 'git@github.com:PayStax/paystax-java-client.git'
