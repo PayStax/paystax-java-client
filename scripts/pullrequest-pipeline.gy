@@ -2,7 +2,7 @@ node("paystax") {
 	def mvnHome = tool 'M3'
 	def pullRequestUrl = "https://deployer.netradius.net/api/repos/github/${OWNER}/${REPO}/pulls/${PULLREQUEST}".toString()
 	stage('Preparation') {
-		git 'git@github.com:PayStax/paystax-java-client.git:'
+		git 'git@github.com:PayStax/paystax-java-client.git'
 	}
 	stage('Test Merge') {
 		sh 'git pull origin master'
