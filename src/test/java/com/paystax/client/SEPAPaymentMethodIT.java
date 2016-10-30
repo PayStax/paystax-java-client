@@ -87,7 +87,10 @@ public class SEPAPaymentMethodIT {
 				.save();
 
 		profiler.start("Search SEPA Payment Method");
-		PayStaxPage<PayStaxPaymentMethod> results = client.paymentMethodSearch().search();
+		PayStaxPage<PayStaxPaymentMethod> results = client.paymentMethodSearch()
+				.addType(PayStaxPaymentMethodType.SEPA)
+				.addPaymentMethodId(paymentMethod.getId())
+				.search();
 		profiler.stop();
 		assertThat(results.getPage().getCount(), equalTo(1l));
 		assertThat(results.getContent().get(0).getId(), equalTo(paymentMethod.getId()));
