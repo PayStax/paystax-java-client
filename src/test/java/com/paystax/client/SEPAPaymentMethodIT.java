@@ -108,7 +108,7 @@ public class SEPAPaymentMethodIT {
 		assertThat(paymentMethod.getMandateId(), notNullValue());
 
 //		assertThat(paymentMethod.getMandateUrl(), notNullValue());
-		assertThat(paymentMethod.getMandateContentType(), equalTo(PayStaxSEPAMandateContentType.HTML));
+		assertThat(paymentMethod.getMandateType(), equalTo(PayStaxSEPAMandateContentType.HTML));
 
 		profiler.start("Get SEPA Payment Method Mandate");
 		byte[] mandate = paymentMethod.getMandate();
@@ -135,7 +135,7 @@ public class SEPAPaymentMethodIT {
 		assertThat(paymentMethod.getCreditorId(), equalTo("DE98ZZZ09999999999"));
 		assertThat(paymentMethod.getMandateId(), notNullValue());
 		assertThat(paymentMethod.getMandateUrl(), notNullValue());
-		assertThat(paymentMethod.getMandateContentType(), equalTo(PayStaxSEPAMandateContentType.HTML));
+		assertThat(paymentMethod.getMandateType(), equalTo(PayStaxSEPAMandateContentType.HTML));
 
 		profiler.start("Delete SEPA Payment Method");
 		client.deletePaymentMethod(paymentMethod.getId());

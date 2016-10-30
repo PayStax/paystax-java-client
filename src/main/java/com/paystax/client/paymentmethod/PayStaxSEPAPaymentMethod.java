@@ -56,7 +56,6 @@ public class PayStaxSEPAPaymentMethod extends PayStaxPaymentMethod<PayStaxSEPAPa
 	@Getter(AccessLevel.NONE)
 	private byte[] mandate;
 	private Date signatureDate;
-	private PayStaxSEPAMandateContentType mandateContentType;
 	private String creditorId;
 	private String bankName;
 
