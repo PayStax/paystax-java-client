@@ -94,6 +94,18 @@ public abstract class PayStaxTransaction<T> implements Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
+	public T setGatewayId(UUID gatewayId) {
+		this.gatewayId = gatewayId;
+		return (T) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public T setMerchantReference(String merchantReference) {
+		this.merchantReference = merchantReference;
+		return (T) this;
+	}
+
+	@SuppressWarnings("unchecked")
 	public T save() throws IOException {
 		if (id != null) {
 			throw new PayStaxException("Cannot execute a transaction more than once");

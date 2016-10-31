@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
+import static com.paystax.client.IntegrationTestHelper.*;
 
 /**
  * @author Erik R. Jensen
@@ -40,8 +41,10 @@ public class CountryRoutingGatewayIT {
 
 	@BeforeClass
 	public static void init() throws IOException {
-		client = IntegrationTestHelper.getClient();
-		fakeGateway = IntegrationTestHelper.getFakeGateway();
+		client = newAccount();
+		fakeGateway = client.newGateway(PayStaxFakeGateway.class)
+				.setName("Integration Test Fake Gateway")
+				.save();
 		profiler = new Profiler("Country Routing Gateway Integration Tests");
 	}
 

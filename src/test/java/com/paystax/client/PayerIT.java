@@ -25,6 +25,8 @@ import java.io.IOException;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import static com.paystax.client.IntegrationTestHelper.*;
+
 /**
  * @author Erik R. Jensen
  */
@@ -37,7 +39,7 @@ public class PayerIT {
 
 	@BeforeClass
 	public static void beforeClass() throws IOException {
-		client = IntegrationTestHelper.getClient();
+		client = newAccount();
 		profiler = new Profiler("Payer Integration Tests");
 	}
 

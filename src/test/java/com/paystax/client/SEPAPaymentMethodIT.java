@@ -28,6 +28,7 @@ import java.util.Date;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static com.paystax.client.IntegrationTestHelper.*;
 
 /**
  * @author Erik R. Jensen
@@ -39,7 +40,7 @@ public class SEPAPaymentMethodIT {
 
 	@BeforeClass
 	public static void beforeClass() throws IOException {
-		client = IntegrationTestHelper.getClient();
+		client = newAccount();
 		profiler = new Profiler("SEPA Payment Method Integration Tests");
 	}
 

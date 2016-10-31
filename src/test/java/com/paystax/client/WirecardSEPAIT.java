@@ -37,6 +37,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static com.paystax.client.IntegrationTestHelper.*;
 
 /**
  * @author Erik R. Jensen
@@ -56,7 +57,7 @@ public class WirecardSEPAIT {
 
 	@BeforeClass
 	public static void init() throws IOException {
-		client = IntegrationTestHelper.getClient();
+		client = newAccount();
 		profiler = new Profiler("Wirecard SEPA Integration Tests");
 		Properties props = IntegrationTestHelper.getConfig();
 		url = props.getProperty("wirecard.url");

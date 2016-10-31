@@ -29,6 +29,7 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
+import static com.paystax.client.IntegrationTestHelper.*;
 
 /**
  * @author Erik R. Jensen
@@ -41,7 +42,7 @@ public class PaymentMethodIT {
 
 	@BeforeClass
 	public static void init() throws IOException {
-		client = IntegrationTestHelper.getClient();
+		client = newAccount();
 		profiler = new Profiler("Payment Method Integration Tests");
 	}
 

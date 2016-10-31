@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -36,18 +35,15 @@ import java.util.UUID;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeName("SEPA")
-@Deprecated // TODO Remove this class when no longer used
-public class PayStaxSEPA extends PayStaxTransaction<PayStaxSEPA> {
+@JsonTypeName("SEPA_VOID")
+public class PayStaxSEPAVoid extends PayStaxTransaction<PayStaxSEPAVoid> {
 
-	private static final long serialVersionUID = -6445650206785154459L;
+	private static final long serialVersionUID = -3052621930325078114L;
 
-	protected UUID paymentMethodId;
-	protected BigDecimal amount;
+	protected UUID priorTransaction;
 
-	public PayStaxSEPA(RestClient restClient) {
+	public PayStaxSEPAVoid(RestClient restClient) {
 		super(restClient);
-		this.type = PayStaxTransactionType.SEPA;
+		this.type = PayStaxTransactionType.SEPA_VOID;
 	}
-
 }

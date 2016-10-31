@@ -15,12 +15,13 @@
  */
 package com.paystax.client;
 
-import org.junit.Before;
+import com.paystax.client.exception.PayStaxBadRequestException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
 
+import static com.paystax.client.IntegrationTestHelper.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -33,15 +34,26 @@ public class AccountIT {
 
 	@BeforeClass
 	public static void init() throws IOException {
-		client = IntegrationTestHelper.getClient();
+		client = getDefaultClient();
 	}
 
-	@Test
-	public void test() throws IOException {
-
-		PayStaxAccount account = client.getAccount();
-
+	@Test(expected = PayStaxBadRequestException.class)
+	public void testSiteUnavailable() throws IOException {
+		try {
+			client.newAccount()
+					.setSite("master")
+					.setUsername("test")
+					.setPassword("Password1$")
+					.setFirstName(givenName())
+					.setLastName(surname())
+					.setCompanyName(companyName())
+					.setEmailAddress(emailAddress())
+					.save();
+		} catch (PayStaxBadRequestException x) {
+			assertThat(x.getErrors().size(), equalTo(1));
+			assertThat(x.getErrors().get(0).getField(), equalTo("site"));
+			throw x;
+		}
 	}
-
 
 }

@@ -36,18 +36,17 @@ import java.util.UUID;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeName("SEPA")
-@Deprecated // TODO Remove this class when no longer used
-public class PayStaxSEPA extends PayStaxTransaction<PayStaxSEPA> {
+@JsonTypeName("SEPA_AUTH")
+public class PayStaxSEPAAuth extends PayStaxTransaction<PayStaxSEPAAuth> {
 
-	private static final long serialVersionUID = -6445650206785154459L;
+	private static final long serialVersionUID = -7433298504663784218L;
 
 	protected UUID paymentMethodId;
 	protected BigDecimal amount;
 
-	public PayStaxSEPA(RestClient restClient) {
+	public PayStaxSEPAAuth(RestClient restClient) {
 		super(restClient);
-		this.type = PayStaxTransactionType.SEPA;
+		this.type = PayStaxTransactionType.SEPA_AUTH;
 	}
 
 }

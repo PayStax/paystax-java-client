@@ -36,6 +36,8 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import static com.paystax.client.IntegrationTestHelper.*;
+
 /**
  * Integration tests for Authorize.Net
  *
@@ -55,7 +57,7 @@ public class AuthorizeNetIT {
 
 	@BeforeClass
 	public static void init() throws IOException {
-		client = IntegrationTestHelper.getClient();
+		client = newAccount();
 		profiler = new Profiler("Authorize.Net Integration Tests");
 		Properties props = IntegrationTestHelper.getConfig();
 		loginId = props.getProperty("authnet.loginid");

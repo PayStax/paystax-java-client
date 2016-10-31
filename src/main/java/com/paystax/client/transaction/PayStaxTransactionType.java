@@ -25,6 +25,11 @@ public enum PayStaxTransactionType {
 	CARD_VOID,
 	CARD_REFUND,
 	CARD_CREDIT,
-	SEPA,
+	SEPA, // TODO To be removed
+	SEPA_AUTH,
+	SEPA_DEBIT,
+	SEPA_CREDIT,
+	SEPA_REFUND,
+	SEPA_VOID,
 	ACH
 }
