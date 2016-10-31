@@ -142,7 +142,7 @@
 				<version>${license-maven-plugin.version}</version>
 				<configuration>
 					<header>${basedir}/NOTICE.txt</header>
-					<failIfMissing>true</failIfMissing>
+					<failIfMissing>false</failIfMissing>
 					<aggregate>true</aggregate>
 					<strictCheck>true</strictCheck>
 					<includes>
