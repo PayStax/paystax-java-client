@@ -31,6 +31,8 @@ import static org.junit.Assert.*;
 import static com.paystax.client.IntegrationTestHelper.*;
 
 /**
+ * Integration tests for creating SEPA mandates.
+ *
  * @author Erik R. Jensen
  */
 public class SEPAPaymentMethodIT {
@@ -111,7 +113,6 @@ public class SEPAPaymentMethodIT {
 		assertThat(paymentMethod.getCreditorId(), equalTo("DE98ZZZ09999999999"));
 		assertThat(paymentMethod.getMandateId(), notNullValue());
 
-//		assertThat(paymentMethod.getMandateUrl(), notNullValue());
 		assertThat(paymentMethod.getMandateType(), equalTo(PayStaxSEPAMandateContentType.HTML));
 
 		profiler.start("Get SEPA Payment Method Mandate");

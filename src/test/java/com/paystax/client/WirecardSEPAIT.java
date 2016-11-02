@@ -1,25 +1,12 @@
-/**
- *    Copyright 2013-2016 PayStax, LLC
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
 package com.paystax.client;
 
+import com.paystax.client.gateway.PayStaxGateway;
 import com.paystax.client.gateway.PayStaxWirecardGateway;
 import com.paystax.client.junit.ConditionalIgnoreRule;
+import com.paystax.client.paymentmethod.PayStaxPaymentMethod;
 import com.paystax.client.paymentmethod.PayStaxSEPAMandateContentType;
 import com.paystax.client.paymentmethod.PayStaxSEPAPaymentMethod;
-import com.paystax.client.transaction.PayStaxSEPA;
+import com.paystax.client.transaction.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -27,17 +14,14 @@ import org.junit.Test;
 import org.slf4j.profiler.Profiler;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static com.paystax.client.IntegrationTestHelper.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 /**
  * @author Erik R. Jensen
@@ -51,20 +35,12 @@ public class WirecardSEPAIT {
 	private static String username;
 	private static String password;
 	private static String merchantId;
+	private static PayStaxPayer payer;
+	private static PayStaxGateway<PayStaxWirecardGateway> gateway;
+	private static PayStaxPaymentMethod<PayStaxSEPAPaymentMethod> paymentMethod;
 
 	@Rule
 	public ConditionalIgnoreRule rule = new ConditionalIgnoreRule();
-
-	@BeforeClass
-	public static void init() throws IOException {
-		client = newAccount();
-		profiler = new Profiler("Wirecard SEPA Integration Tests");
-		Properties props = IntegrationTestHelper.getConfig();
-		url = props.getProperty("wirecard.url");
-		username = props.getProperty("wirecard.username");
-		password = props.getProperty("wirecard.password");
-		merchantId = props.getProperty("wirecard.merchantId");
-	}
 
 	public static class WirecardEnabled implements ConditionalIgnoreRule.IgnoreCondition {
 		@Override
@@ -73,18 +49,7 @@ public class WirecardSEPAIT {
 		}
 	}
 
-	private BigDecimal getAmount() {
-		Calendar cal = Calendar.getInstance();
-		int num = cal.get(Calendar.SECOND) + 500;
-		if (cal.get(Calendar.MINUTE) % 2 == 0) {
-			num += 60;
-		}
-		char[] p = Integer.toString(num).toCharArray();
-		assertThat(p.length, equalTo(3));
-		return new BigDecimal(p[0] + "." + p[1] + p[2]);
-	}
-
-	private PayStaxWirecardGateway getGateway() throws IOException {
+	private static PayStaxWirecardGateway newGateway() throws IOException {
 		return client.newGateway(PayStaxWirecardGateway.class)
 				.setUrl(url)
 				.setUsername(username)
@@ -94,7 +59,7 @@ public class WirecardSEPAIT {
 				.save();
 	}
 
-	private PayStaxPayer getPayer() throws IOException {
+	private static PayStaxPayer newPayer() throws IOException {
 		return client.newPayer()
 				.setFirstName("James")
 				.setLastName("Kirk")
@@ -103,7 +68,7 @@ public class WirecardSEPAIT {
 				.save();
 	}
 
-	private PayStaxSEPAPaymentMethod getPaymentMethod(PayStaxPayer payer) throws IOException {
+	private static PayStaxSEPAPaymentMethod newPaymentMethod(PayStaxPayer payer) throws IOException {
 		return client.newPaymentMethod(PayStaxSEPAPaymentMethod.class)
 				.setFirstName("James")
 				.setLastName("Kirk")
@@ -117,25 +82,137 @@ public class WirecardSEPAIT {
 				.save();
 	}
 
+	@BeforeClass
+	public static void init() throws IOException {
+		client = newAccount();
+		profiler = new Profiler("Wirecard SEPA Integration Tests");
+		Properties props = IntegrationTestHelper.getConfig();
+		url = props.getProperty("wirecard.url");
+		username = props.getProperty("wirecard.username");
+		password = props.getProperty("wirecard.password");
+		merchantId = props.getProperty("wirecard.merchantId");
+		gateway = newGateway();
+		payer = newPayer();
+		paymentMethod = newPaymentMethod(payer);
+	}
+
 	@Test
 	@ConditionalIgnoreRule.ConditionalIgnore(condition = WirecardSEPAIT.WirecardEnabled.class)
-	public void test() throws IOException {
-		profiler.start("New SEPA Gateway");
-		PayStaxWirecardGateway gateway = getGateway();
-		profiler.start("New SEPA Payer");
-		PayStaxPayer payer = getPayer();
-		profiler.start("New Payment Method");
-		PayStaxSEPAPaymentMethod paymentMethod = getPaymentMethod(payer);
-		profiler.start("New SEPA Transaction");
-		PayStaxSEPA tx = client.newTransaction(PayStaxSEPA.class)
-				.setAmount(getAmount())
+	public void testAuthAndDebitAndVoid() throws IOException {
+		profiler.start("Wirecard SEPA Test Auth And Debit");
+		PayStaxSEPAAuth auth = client.newTransaction(PayStaxSEPAAuth.class)
+				.setAmount(amount())
 				.setPaymentMethodId(paymentMethod.getId())
-				.setMerchantReference(UUID.randomUUID().toString())
 				.setGatewayId(gateway.getId())
+				.setMerchantReference(UUID.randomUUID().toString())
 				.save();
-		profiler.stop();
 
-		assertTrue(tx.isSuccess());
-		log.info("Saved transaction: " + tx.toString());
+		assertThat(auth.getId(), notNullValue());
+		assertThat(auth.isSuccess(), equalTo(true));
+
+		PayStaxSEPADebitAuth debit = client.newTransaction(PayStaxSEPADebitAuth.class)
+				.setMerchantReference(UUID.randomUUID().toString())
+				.setPriorTransaction(auth.getId())
+				.save();
+
+		assertThat(debit.getId(), notNullValue());
+		assertThat(debit.isSuccess(), equalTo(true));
+
+		PayStaxSEPAVoid svoid = client.newTransaction(PayStaxSEPAVoid.class)
+				.setMerchantReference(UUID.randomUUID().toString())
+				.setPriorTransaction(debit.getId())
+				.save();
+
+		assertThat(svoid.getId(), notNullValue());
+		assertThat(svoid.isSuccess(), equalTo(true));
+
+		profiler.stop();
+	}
+
+	@Test
+	@ConditionalIgnoreRule.ConditionalIgnore(condition = WirecardSEPAIT.WirecardEnabled.class)
+	public void testDebit() throws IOException {
+		profiler.start("Wirecard SEPA Test Debit");
+		PayStaxSEPADebit debit = client.newTransaction(PayStaxSEPADebit.class)
+				.setAmount(amount())
+				.setPaymentMethodId(paymentMethod.getId())
+				.setGatewayId(gateway.getId())
+				.setMerchantReference(UUID.randomUUID().toString())
+				.save();
+
+		assertThat(debit.getId(), notNullValue());
+		assertThat(debit.isSuccess(), equalTo(true));
+
+		profiler.stop();
+	}
+
+	@Test
+	@ConditionalIgnoreRule.ConditionalIgnore(condition = WirecardSEPAIT.WirecardEnabled.class)
+	public void testDebitAndVoid() throws IOException {
+		profiler.start("Wirecard SEPA Test Debit And Void");
+
+		PayStaxSEPADebit debit = client.newTransaction(PayStaxSEPADebit.class)
+				.setAmount(amount())
+				.setPaymentMethodId(paymentMethod.getId())
+				.setGatewayId(gateway.getId())
+				.setMerchantReference(UUID.randomUUID().toString())
+				.save();
+
+		assertThat(debit.getId(), notNullValue());
+		assertThat(debit.isSuccess(), equalTo(true));
+
+		PayStaxSEPAVoid svoid = client.newTransaction(PayStaxSEPAVoid.class)
+				.setMerchantReference(UUID.randomUUID().toString())
+				.setPriorTransaction(debit.getId())
+				.save();
+
+		assertThat(svoid.getId(), notNullValue());
+		assertThat(svoid.isSuccess(), equalTo(true));
+
+		profiler.stop();
+	}
+
+	@Test
+	@ConditionalIgnoreRule.ConditionalIgnore(condition = WirecardSEPAIT.WirecardEnabled.class)
+	public void testCredit() throws IOException {
+		profiler.start("Wirecard SEPA Test Credit");
+
+		PayStaxSEPACredit credit = client.newTransaction(PayStaxSEPACredit.class)
+				.setAmount(amount())
+				.setPaymentMethodId(paymentMethod.getId())
+				.setGatewayId(gateway.getId())
+				.setMerchantReference(UUID.randomUUID().toString())
+				.save();
+
+		assertThat(credit.getId(), notNullValue());
+		assertThat(credit.isSuccess(), equalTo(true));
+
+		profiler.stop();
+	}
+
+	@Test
+	@ConditionalIgnoreRule.ConditionalIgnore(condition = WirecardSEPAIT.WirecardEnabled.class)
+	public void testCreditAndVoid() throws IOException {
+		profiler.start("Wirecard SEPA Test Credit And Void");
+
+		PayStaxSEPACredit credit = client.newTransaction(PayStaxSEPACredit.class)
+				.setAmount(amount())
+				.setPaymentMethodId(paymentMethod.getId())
+				.setGatewayId(gateway.getId())
+				.setMerchantReference(UUID.randomUUID().toString())
+				.save();
+
+		assertThat(credit.getId(), notNullValue());
+		assertThat(credit.isSuccess(), equalTo(true));
+
+		PayStaxSEPAVoid svoid = client.newTransaction(PayStaxSEPAVoid.class)
+				.setMerchantReference(UUID.randomUUID().toString())
+				.setPriorTransaction(credit.getId())
+				.save();
+
+		assertThat(svoid.getId(), notNullValue());
+		assertThat(svoid.isSuccess(), equalTo(true));
+
+		profiler.stop();
 	}
 }

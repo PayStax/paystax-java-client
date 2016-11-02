@@ -40,8 +40,7 @@ import java.util.UUID;
 @JsonTypeInfo(
 		use = JsonTypeInfo.Id.NAME,
 		include = JsonTypeInfo.As.PROPERTY,
-		property = "type",
-		visible = true)
+		property = "type")
 public abstract class PayStaxGateway<T extends PayStaxGateway> implements Serializable {
 
 	private static final long serialVersionUID = 8518874465789854110L;
@@ -56,6 +55,7 @@ public abstract class PayStaxGateway<T extends PayStaxGateway> implements Serial
 	protected UUID id;
 
 	@Setter(AccessLevel.NONE)
+	@JsonTypeId
 	protected PayStaxGatewayType type;
 
 	@Setter(AccessLevel.NONE)

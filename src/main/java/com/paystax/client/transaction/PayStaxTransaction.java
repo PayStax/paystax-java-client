@@ -44,8 +44,7 @@ import java.util.UUID;
 @JsonTypeInfo(
 		use = JsonTypeInfo.Id.NAME,
 		include = JsonTypeInfo.As.PROPERTY,
-		property = "type",
-		visible = true)
+		property = "type")
 public abstract class PayStaxTransaction<T> implements Serializable {
 
 	private static final long serialVersionUID = 5029468493996020971L;
@@ -60,8 +59,10 @@ public abstract class PayStaxTransaction<T> implements Serializable {
 	protected UUID id;
 
 	@Setter(AccessLevel.NONE)
+	@JsonTypeId
 	protected PayStaxTransactionType type;
 
+	// TODO This doesn't belong on this parent type
 	@Setter(AccessLevel.NONE)
 	protected UUID gatewayId;
 
@@ -74,6 +75,7 @@ public abstract class PayStaxTransaction<T> implements Serializable {
 	@Setter(AccessLevel.NONE)
 	protected UUID payerId;
 
+	// TODO This doesn't belong on this parent type
 	@Setter(AccessLevel.NONE)
 	protected UUID dynamicGatewayId;
 
@@ -83,9 +85,11 @@ public abstract class PayStaxTransaction<T> implements Serializable {
 	@Setter(AccessLevel.NONE)
 	protected PayStaxReason reason;
 
+	// TODO We should not be sending this in our JSON to the server
 	@Setter(AccessLevel.NONE)
 	protected PayStaxAuditData auditData;
 
+	// TODO We should not be sending this in our JSON to the server
 	@Setter(AccessLevel.NONE)
 	protected PayStaxGatewayResponse gatewayResponse;
 
@@ -114,6 +118,7 @@ public abstract class PayStaxTransaction<T> implements Serializable {
 		return (T)this;
 	}
 
+	@JsonIgnore
 	public boolean isSuccess() {
 		return status != null && status.getCode() == 1;
 	}

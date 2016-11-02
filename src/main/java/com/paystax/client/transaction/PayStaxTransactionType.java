@@ -28,6 +28,7 @@ public enum PayStaxTransactionType {
 	SEPA, // TODO To be removed
 	SEPA_AUTH,
 	SEPA_DEBIT,
+	SEPA_DEBIT_AUTH,
 	SEPA_CREDIT,
 	SEPA_REFUND,
 	SEPA_VOID,

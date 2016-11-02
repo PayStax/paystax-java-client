@@ -28,15 +28,15 @@ import org.junit.Test;
 import org.slf4j.profiler.Profiler;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-import static com.paystax.client.IntegrationTestHelper.*;
+import static com.paystax.client.IntegrationTestHelper.amount;
+import static com.paystax.client.IntegrationTestHelper.newAccount;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Integration tests for Authorize.Net
@@ -78,17 +78,6 @@ public class AuthorizeNetIT {
 		return Integer.toString(cal.get(Calendar.YEAR));
 	}
 
-	private BigDecimal getAmount() {
-		Calendar cal = Calendar.getInstance();
-		int num = cal.get(Calendar.SECOND) + 500;
-		if (cal.get(Calendar.MINUTE) % 2 == 0) {
-			num += 60;
-		}
-		char[] p = Integer.toString(num).toCharArray();
-		assertThat(p.length, equalTo(3));
-		return new BigDecimal(p[0] + "." + p[1] + p[2]);
-	}
-
 	private PayStaxAuthorizeNetGateway getGateway() throws IOException {
 		return client.newGateway(PayStaxAuthorizeNetGateway.class)
 				.setEnvironment(environment)
@@ -119,7 +108,7 @@ public class AuthorizeNetIT {
 		PayStaxCardAuth tx = client.newTransaction(PayStaxCardAuth.class)
 				.setMerchantReference(UUID.randomUUID().toString())
 				.setGatewayId(gateway.getId())
-				.setAmount(getAmount())
+				.setAmount(amount())
 				.setCurrency("USD")
 				.setAccountNumber("4242424242424242")
 				.setExpMonth("08")
@@ -140,7 +129,7 @@ public class AuthorizeNetIT {
 		PayStaxCardAuthCapture tx = client.newTransaction(PayStaxCardAuthCapture.class)
 				.setMerchantReference(UUID.randomUUID().toString())
 				.setGatewayId(gateway.getId())
-				.setAmount(getAmount())
+				.setAmount(amount())
 				.setCurrency("USD")
 				.setAccountNumber("4242424242424242")
 				.setExpMonth("08")

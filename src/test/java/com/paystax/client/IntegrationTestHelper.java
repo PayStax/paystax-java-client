@@ -21,8 +21,12 @@ import com.paystax.client.gateway.PayStaxFakeGateway;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * Methods to assist with integration tests.
@@ -298,9 +302,26 @@ public class IntegrationTestHelper {
 	public static String password() {
 		String password = random(1, 1, punct)
 				+ random(1, 1, alphaUpper)
-				+ random(6, 253, alphaNumeric);
+				+ random(1, 1, numeric)
+				+ random(6, 252, alphaNumeric);
 		log.trace("Generated password [" + password + "]");
 		return password;
+	}
+
+	/**
+	 * Returns an amount based on the current time.
+	 *
+	 * @return an amount
+	 */
+	public static BigDecimal amount() {
+		Calendar cal = Calendar.getInstance();
+		int num = cal.get(Calendar.SECOND) + 500;
+		if (cal.get(Calendar.MINUTE) % 2 == 0) {
+			num += 60;
+		}
+		char[] p = Integer.toString(num).toCharArray();
+		assertThat(p.length, equalTo(3));
+		return new BigDecimal(p[0] + "." + p[1] + p[2]);
 	}
 
 	/**
