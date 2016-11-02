@@ -109,6 +109,7 @@ public class SEPAPaymentMethodIT {
 		assertThat(paymentMethod.getSignatureDate(), equalTo(now));
 		assertThat(paymentMethod.getBic(), equalTo("WIREDEMMXXX"));
 		assertThat(paymentMethod.getIban(), equalTo("DE42512308000000060004"));
+		assertThat(paymentMethod.getBankName(), equalTo("International Bank Of Awesome"));
 		assertThat(paymentMethod.getPayerId(), equalTo(payer.getId()));
 		assertThat(paymentMethod.getCreditorId(), equalTo("DE98ZZZ09999999999"));
 		assertThat(paymentMethod.getMandateId(), notNullValue());
@@ -136,6 +137,7 @@ public class SEPAPaymentMethodIT {
 		assertThat(paymentMethod.getSignatureDate(), equalTo(now));
 		assertThat(paymentMethod.getBic(), equalTo("WIREDEMMXXX"));
 		assertThat(paymentMethod.getIban(), equalTo("DE42512308000000060004"));
+		assertThat(paymentMethod.getBankName(), equalTo("International Bank Of Awesome"));
 		assertThat(paymentMethod.getPayerId(), equalTo(payer.getId()));
 		assertThat(paymentMethod.getCreditorId(), equalTo("DE98ZZZ09999999999"));
 		assertThat(paymentMethod.getMandateId(), notNullValue());
