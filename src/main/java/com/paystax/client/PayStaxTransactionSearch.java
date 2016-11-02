@@ -24,6 +24,9 @@ import lombok.experimental.Accessors;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Erik R. Jensen
@@ -44,14 +47,22 @@ public class PayStaxTransactionSearch extends PayStaxSearch<PayStaxTransactionSe
 		this.restClient = restClient;
 	}
 
-	private PayStaxTransactionType[] type;
+	private List<PayStaxTransactionType> type;
 	private String merchantReferenceEquals;
 	private String merchantReferenceContains;
 	private String merchantReferenceStartsWith;
 
 	@SuppressWarnings("unchecked")
 	public PayStaxPage<PayStaxTransaction> search() throws IOException {
-		String uri = "/payments?" + new QueryStringBuilder().add(this).toQueryString();
+		String uri = "/transactions?" + new QueryStringBuilder().add(this).toQueryString();
 		return restClient.get(uri, PayStaxPage.class, PayStaxTransaction.class);
+	}
+
+	public PayStaxTransactionSearch addType(PayStaxTransactionType ... types) {
+		if (this.type == null) {
+			this.type = new ArrayList<>(types.length);
+		}
+		type.addAll(Arrays.asList(types));
+		return this;
 	}
 }

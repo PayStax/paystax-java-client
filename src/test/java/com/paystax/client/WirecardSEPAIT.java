@@ -126,6 +126,15 @@ public class WirecardSEPAIT {
 		assertThat(svoid.getId(), notNullValue());
 		assertThat(svoid.isSuccess(), equalTo(true));
 
+
+		PayStaxPage<PayStaxTransaction> transactions = client.transactionSearch()
+				.setMerchantReferenceEquals(auth.getMerchantReference())
+				.addType(PayStaxTransactionType.SEPA_AUTH)
+				.search();
+
+		assertThat(transactions.getPage().getCount(), equalTo(1l));
+		assertThat(transactions.getContent().get(0).getId(), equalTo(auth.getId()));
+
 		profiler.stop();
 	}
 
@@ -142,6 +151,14 @@ public class WirecardSEPAIT {
 
 		assertThat(debit.getId(), notNullValue());
 		assertThat(debit.isSuccess(), equalTo(true));
+
+		PayStaxPage<PayStaxTransaction> transactions = client.transactionSearch()
+				.setMerchantReferenceEquals(debit.getMerchantReference())
+				.addType(PayStaxTransactionType.SEPA_DEBIT)
+				.search();
+
+		assertThat(transactions.getPage().getCount(), equalTo(1l));
+		assertThat(transactions.getContent().get(0).getId(), equalTo(debit.getId()));
 
 		profiler.stop();
 	}

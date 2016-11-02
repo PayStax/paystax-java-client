@@ -40,7 +40,14 @@ import java.util.UUID;
 		@Type(value = PayStaxCardCapture.class, name = "CARD_CAPTURE"),
 		@Type(value = PayStaxCardVoid.class, name = "CARD_VOID"),
 		@Type(value = PayStaxCardRefund.class, name = "CARD_REFUND"),
-		@Type(value = PayStaxCardCredit.class, name = "CARD_CREDIT")})
+		@Type(value = PayStaxCardCredit.class, name = "CARD_CREDIT"),
+		@Type(value = PayStaxSEPA.class, name = "SEPA"),
+		@Type(value = PayStaxSEPAAuth.class, name = "SEPA_AUTH"),
+		@Type(value = PayStaxSEPADebit.class, name = "SEPA_DEBIT"),
+		@Type(value = PayStaxSEPADebitAuth.class, name = "SEPA_DEBIT_AUTH"),
+		@Type(value = PayStaxSEPACredit.class, name = "SEPA_CREDIT"),
+		@Type(value = PayStaxSEPARefund.class, name = "SEPA_REFUND"),
+		@Type(value = PayStaxSEPAVoid.class, name = "SEPA_VOID")})
 @JsonTypeInfo(
 		use = JsonTypeInfo.Id.NAME,
 		include = JsonTypeInfo.As.PROPERTY,
